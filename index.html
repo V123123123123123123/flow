@@ -1478,54 +1478,49 @@ You’re not chasing the feeling — you’re becoming the person who lives in t
     let currentVolume = 0.3;
     
     function createVolumeControl() {
-      const volumeControl = document.createElement('div');
-      volumeControl.id = 'volumeControl';
-      volumeControl.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 25px;
-        padding: 10px 15px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        z-index: 1000;
-        transition: all 0.3s ease;
-      `;
-      
-      volumeControl.innerHTML = `
-        <span style="font-size: 1.2em;">🔊</span>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="${currentVolume}" 
-               style="width: 80px; cursor: pointer;">
-        <span id="volumeValue" style="font-size: 0.8em; color: #666; min-width: 30px;">${Math.round(currentVolume * 100)}%</span>
-      `;
-      
-      document.body.appendChild(volumeControl);
-      
-      const slider = document.getElementById('volumeSlider');
-      const valueDisplay = document.getElementById('volumeValue');
-      const backgroundMusic = document.getElementById('backgroundMusic');
-      
-      slider.addEventListener('input', function() {
-        currentVolume = parseFloat(this.value);
-        if (backgroundMusic) {
-          backgroundMusic.volume = currentVolume;
-        }
-        valueDisplay.textContent = Math.round(currentVolume * 100) + '%';
-        
-        // Меняем иконку в зависимости от громкости
-        const icon = volumeControl.querySelector('span');
-        if (currentVolume === 0) {
-          icon.textContent = '🔇';
-        } else if (currentVolume < 0.5) {
-          icon.textContent = '🔉';
-        } else {
-          icon.textContent = '🔊';
-        }
-      });
+  const volumeControl = document.createElement('div');
+  volumeControl.id = 'volumeControl';
+  volumeControl.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 25px;
+    padding: 10px 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  `;
+  
+  volumeControl.innerHTML = `
+    <span style="font-size: 1.2em;">🔊</span>
+    <span style="font-size: 0.9em; color: #888;">Sound</span>
+  `;
+  
+  document.body.appendChild(volumeControl);
+  
+  let isPlaying = false;
+  const backgroundMusic = document.getElementById('backgroundMusic');
+  const icon = volumeControl.querySelector('span');
+  
+  volumeControl.addEventListener('click', function() {
+    if (backgroundMusic) {
+      if (isPlaying) {
+        backgroundMusic.pause();
+        icon.textContent = '🔇';
+        isPlaying = false;
+      } else {
+        backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
+        icon.textContent = '🔊';
+        isPlaying = true;
+      }
     }
+  });
+}
 
     // Инициализация контрола громкости при загрузке страницы
     document.addEventListener('DOMContentLoaded', function() {
