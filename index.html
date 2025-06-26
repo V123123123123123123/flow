@@ -32,6 +32,17 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .overlay.fade-in {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .game-container {
@@ -50,6 +61,8 @@
       animation: fadeIn 1s ease-in-out;
       max-height: 90vh;
       overflow-y: auto;
+      will-change: transform, opacity;
+      transform: translateZ(0);
     }
 
     .logo {
@@ -78,11 +91,18 @@
       font-weight: bold;
       text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
       display: block;
+      will-change: transform;
+      backface-visibility: hidden;
     }
 
     .start-button:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .start-button:focus {
+      outline: 3px solid #667eea;
+      outline-offset: 2px;
     }
 
     .level-grid {
@@ -100,11 +120,19 @@
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid transparent;
+      will-change: transform;
+      backface-visibility: hidden;
     }
 
     .level-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      border-color: #667eea;
+    }
+
+    .level-card:focus {
+      outline: 3px solid #667eea;
+      outline-offset: 2px;
       border-color: #667eea;
     }
 
@@ -143,6 +171,11 @@
       transform: translateY(-2px);
     }
 
+    .back-button:focus {
+      outline: 3px solid #667eea;
+      outline-offset: 2px;
+    }
+
     .content-text {
       color: #34495e;
       font-size: 1.1em;
@@ -170,9 +203,66 @@
       white-space: pre-line;
     }
 
+    .progress-indicator {
+      margin: 10px 0;
+      font-size: 0.9em;
+      color: #7f8c8d;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 15px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .level-highlight {
+      margin: 15px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+
+    .error-message {
+      background: rgba(231, 76, 60, 0.1);
+      color: #e74c3c;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 10px 0;
+      border-left: 4px solid #e74c3c;
+      display: none;
+    }
+
+    .loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .pulsing {
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Responsive анимации - отключаем для слабых устройств */
+    @media (prefers-reduced-motion: reduce) {
+      .game-container,
+      .level-card,
+      .start-button,
+      .back-button {
+        animation: none !important;
+        transition: none !important;
+      }
+      
+      .overlay {
+        transition: none !important;
+      }
     }
 
     @media (max-width: 768px) {
@@ -196,6 +286,15 @@
         padding: 15px;
       }
     }
+
+    /* Улучшения производительности */
+    .content-text, .action-text {
+      contain: layout style paint;
+    }
+
+    .level-card {
+      contain: layout style paint;
+    }
   </style>
 </head>
   
@@ -207,7 +306,9 @@
   <div id="introScreen" class="overlay">
     <div class="game-container">
       <div class="logo"></div>
-      <button class="start-button" onclick="startGame()">Start Your Journey</button>
+      <button class="start-button" onclick="startGame()" 
+              aria-label="Start your emotional journey"
+              tabindex="0">Start Your Journey</button>
     </div>
   </div>
 
@@ -215,49 +316,82 @@
   <div id="levelSelection" class="overlay" style="display: none;">
     <div class="game-container">
       <h2 style="color: #2c3e50; margin-bottom: 20px;">How are you feeling right now?</h2>
+      <div class="progress-indicator" id="progressIndicator" style="display: none;">
+        Explored levels: 0/9
+      </div>
       <p style="color: #7f8c8d; margin-bottom: 25px;">Choose the level that best describes your current emotional state:</p>
+      <div class="error-message" id="errorMessage">
+        Something went wrong. Please try again.
+      </div>
       <div class="level-grid">
-        <div class="level-card level-1" onclick="selectLevel(1)">
+        <div class="level-card level-1" onclick="selectLevel(1)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 1: Deep Negativity"
+             onkeypress="handleKeyPress(event, 1)">
           <div class="level-emoji">🔴</div>
           <div class="level-title">Level 1: Deep Negativity</div>
           <div class="level-emotions">Humiliated, Desperate, Depressed, Powerless</div>
         </div>
-        <div class="level-card level-2" onclick="selectLevel(2)">
+        <div class="level-card level-2" onclick="selectLevel(2)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 2: Heavy Experiences"
+             onkeypress="handleKeyPress(event, 2)">
           <div class="level-emoji">🟠</div>
           <div class="level-title">Level 2: Heavy Experiences</div>
           <div class="level-emotions">Disappointed, Empty, Numb, Hopeless</div>
         </div>
-        <div class="level-card level-3" onclick="selectLevel(3)">
+        <div class="level-card level-3" onclick="selectLevel(3)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 3: Negative Activation"
+             onkeypress="handleKeyPress(event, 3)">
           <div class="level-emoji">🔴</div>
           <div class="level-title">Level 3: Negative Activation</div>
           <div class="level-emotions">Angry, Irritated, Upset, Critical</div>
         </div>
-        <div class="level-card level-4" onclick="selectLevel(4)">
+        <div class="level-card level-4" onclick="selectLevel(4)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 4: Neutral Negativity"
+             onkeypress="handleKeyPress(event, 4)">
           <div class="level-emoji">🟤</div>
           <div class="level-title">Level 4: Neutral Negativity</div>
           <div class="level-emotions">Bored, Embarrassed, Uncertain, Doubtful</div>
         </div>
-        <div class="level-card level-5" onclick="selectLevel(5)">
+        <div class="level-card level-5" onclick="selectLevel(5)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 5: Neutral State"
+             onkeypress="handleKeyPress(event, 5)">
           <div class="level-emoji">⚪</div>
           <div class="level-title">Level 5: Neutral State</div>
           <div class="level-emotions">Calm, Content, Relaxed, Focused</div>
         </div>
-        <div class="level-card level-6" onclick="selectLevel(6)">
+        <div class="level-card level-6" onclick="selectLevel(6)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 6: Light Positivity"
+             onkeypress="handleKeyPress(event, 6)">
           <div class="level-emoji">🟡</div>
           <div class="level-title">Level 6: Light Positivity</div>
           <div class="level-emotions">Interested, Curious, Hopeful, Accepting</div>
         </div>
-        <div class="level-card level-7" onclick="selectLevel(7)">
+        <div class="level-card level-7" onclick="selectLevel(7)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 7: Active Positivity"
+             onkeypress="handleKeyPress(event, 7)">
           <div class="level-emoji">🟢</div>
           <div class="level-title">Level 7: Active Positivity</div>
           <div class="level-emotions">Energetic, Motivated, Inspired, Confident</div>
         </div>
-        <div class="level-card level-8" onclick="selectLevel(8)">
+        <div class="level-card level-8" onclick="selectLevel(8)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 8: High Positivity"
+             onkeypress="handleKeyPress(event, 8)">
           <div class="level-emoji">🟡</div>
           <div class="level-title">Level 8: High Positivity</div>
           <div class="level-emotions">Joyful, Grateful, Enthusiastic, Playful</div>
         </div>
-        <div class="level-card level-9" onclick="selectLevel(9)">
+        <div class="level-card level-9" onclick="selectLevel(9)" 
+             tabindex="0" role="button" 
+             aria-label="Select Level 9: Peak States"
+             onkeypress="handleKeyPress(event, 9)">
           <div class="level-emoji">💚</div>
           <div class="level-title">Level 9: Peak States</div>
           <div class="level-emotions">Blissful, Enlightened, Ecstatic, Unconditionally Loving</div>
@@ -270,10 +404,13 @@
   <div id="guidanceScreen" class="overlay" style="display: none;">
     <div class="game-container">
       <h2 style="color: #2c3e50; margin-bottom: 20px;">Guidance & Techniques</h2>
+      <div class="progress-indicator" id="guidanceProgress" style="display: none;">
+        Explored levels: 0/9
+      </div>
       <div id="guidanceText" class="content-text">
         Here you will see your level-specific strategies.
       </div>
-      <button class="back-button" onclick="goBack()">← Back to Levels</button>
+      <button class="back-button" onclick="goBack()" aria-label="Go back to level selection">← Back to Levels</button>
     </div>
   </div>
 
@@ -281,440 +418,1145 @@
   <div id="actionScreen" class="overlay" style="display: none;">
     <div class="game-container">
       <h2 style="color: #2c3e50; margin-bottom: 20px;">Your Action Plan</h2>
+      <div class="progress-indicator" id="actionProgress" style="display: none;">
+        Explored levels: 0/9
+      </div>
       <div id="actionText" class="action-text">
         This is where your practical steps will appear.
       </div>
-      <button class="back-button" onclick="goToGuidance()">← Back to Guidance</button>
-      <button class="start-button" onclick="endGame()">Finish</button>
+      <button class="back-button" onclick="goToGuidance()" aria-label="Go back to guidance">← Back to Guidance</button>
+      <button class="start-button" onclick="endGame()" aria-label="Finish session">Finish</button>
     </div>
   </div>
 
   <script>
-    const backgroundMusic = document.getElementById("backgroundMusic");
+    // Система состояния и отслеживания прогресса
+    const gameState = {
+      currentLevel: null,
+      visitedLevels: new Set(),
+      startTime: null,
+      sessionData: [],
+      isInitialized: false
+    };
 
+    // Дебаунсинг для кликов
+    let isTransitioning = false;
+
+    function debounceClick(callback, delay = 300) {
+      if (isTransitioning) return;
+      isTransitioning = true;
+      callback();
+      setTimeout(() => isTransitioning = false, delay);
+    }
+
+    // Система обработки ошибок
+    function safeElementOperation(elementId, operation) {
+      try {
+        const element = document.getElementById(elementId) || document.querySelector(elementId);
+        if (!element) {
+          console.warn(`Element not found: ${elementId}`);
+          showError('Interface element not found. Please refresh the page.');
+          return false;
+        }
+        operation(element);
+        return true;
+      } catch (error) {
+        console.error(`Error with element ${elementId}:`, error);
+        showError('An error occurred. Please try again.');
+        return false;
+      }
+    }
+
+    function showError(message) {
+      const errorElement = document.getElementById('errorMessage');
+      if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        setTimeout(() => {
+          errorElement.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    // Валидация уровня
+    function validateLevel(level) {
+      return level >= 1 && level <= 9 && Number.isInteger(level) && !isNaN(level);
+    }
+
+    // Обновление индикатора прогресса
+    function updateProgressIndicator() {
+      const totalLevels = 9;
+      const visitedCount = gameState.visitedLevels.size;
+      const progressText = `Explored levels: ${visitedCount}/${totalLevels}`;
+      
+      ['progressIndicator', 'guidanceProgress', 'actionProgress'].forEach(id => {
+        safeElementOperation(id, el => {
+          el.textContent = progressText;
+          el.style.display = visitedCount > 0 ? 'inline-block' : 'none';
+        });
+      });
+    }
+
+    // Функция для форматирования текста
+    function formatActionText(text) {
+      if (!text) return '';
+      
+      return text
+        .replace(/(\d+\.\s)/g, '<strong>$1</strong>')
+        .replace(/(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g, '<strong>$1</strong>')
+        .replace(/^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm, '<div class="level-highlight"><strong>$1$2</strong></div>');
+    }
+
+    // Плавные переходы между экранами
+    function transitionToScreen(fromId, toId, callback) {
+      const fromEl = document.getElementById(fromId);
+      const toEl = document.getElementById(toId);
+      
+      if (!fromEl || !toEl) {
+        console.error('Screen transition failed: elements not found');
+        return;
+      }
+
+      // Добавляем класс загрузки
+      fromEl.classList.add('loading');
+      
+      setTimeout(() => {
+        fromEl.style.display = 'none';
+        fromEl.classList.remove('loading');
+        toEl.style.display = 'flex';
+        
+        if (callback) callback();
+        
+        // Фокус на первый интерактивный элемент
+        const firstButton = toEl.querySelector('button, .level-card');
+        if (firstButton) {
+          firstButton.focus();
+        }
+      }, 150);
+    }
+
+    // Инициализация игры
+    function initializeGame() {
+      if (gameState.isInitialized) return;
+      
+      gameState.isInitialized = true;
+      gameState.startTime = Date.now();
+      
+      // Предзагрузка аудио
+      const backgroundMusic = document.getElementById("backgroundMusic");
+      if (backgroundMusic) {
+        backgroundMusic.volume = 0.3; // Устанавливаем умеренную громкость
+        backgroundMusic.load();
+      }
+      
+      console.log('Game initialized successfully');
+    }
+
+    // Главные функции игры
     function startGame() {
-      backgroundMusic.play().catch(() => {});
-      document.querySelector('#introScreen').style.display = 'none';
-      document.querySelector('#levelSelection').style.display = 'flex';
+      debounceClick(() => {
+        initializeGame();
+        
+        const backgroundMusic = document.getElementById("backgroundMusic");
+        if (backgroundMusic) {
+          backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
+        }
+        
+        transitionToScreen('introScreen', 'levelSelection');
+      });
     }
 
     function selectLevel(level) {
-      document.querySelector('#levelSelection').style.display = 'none';
-      document.querySelector('#guidanceScreen').style.display = 'flex';
+      if (!validateLevel(level)) {
+        console.error('Invalid level:', level);
+        showError('Invalid level selected. Please try again.');
+        return;
+      }
       
-      const guidanceTexts = {
-        1: "Level 1: Deep Negativity - Focus on basic self-care and reaching out for support. Small steps like deep breathing, gentle movement, or connecting with a trusted friend can help.",
-        2: "Level 2: Heavy Experiences - Allow yourself to feel these emotions without judgment. Consider journaling, meditation, or engaging in activities that bring small moments of comfort.",
-        3: "Level 3: Negative Activation - Channel this energy constructively through physical exercise, creative expression, or problem-solving. Take breaks to cool down when needed.",
-        4: "Level 4: Neutral Negativity - Explore new activities or perspectives. Sometimes a change of environment or engaging with different content can shift your state.",
-        5: "Level 5: Neutral State - This is a great foundation! Consider setting intentions, practicing gratitude, or engaging in activities that align with your values.",
-        6: "Level 6: Light Positivity - Build on this momentum with learning something new, connecting with others, or pursuing interests that inspire you.",
-        7: "Level 7: Active Positivity - Great energy for taking action on goals, helping others, or engaging in challenging but rewarding activities.",
-        8: "Level 8: High Positivity - Share this joy with others, celebrate achievements, and consider how you can maintain this positive state.",
-        9: "Level 9: Peak States - Embrace this beautiful state while staying grounded. Consider how you can integrate these feelings of connection and love into daily life."
-      };
-      
-      document.getElementById('guidanceText').innerHTML = `
-        ${guidanceTexts[level]}
-        <br/><br/>
-        <button class="start-button" onclick="goToActionPlan(${level})">→ Show Action Plan</button>
-      `;
+      debounceClick(() => {
+        // Сохраняем состояние
+        gameState.currentLevel = level;
+        gameState.visitedLevels.add(level);
+        
+        updateProgressIndicator();
+        
+        transitionToScreen('levelSelection', 'guidanceScreen', () => {
+          const guidanceText = guidanceTexts[level];
+          if (guidanceText) {
+            safeElementOperation('guidanceText', el => {
+              el.innerHTML = `
+                ${guidanceText}
+                <br/><br/>
+                <button class="start-button" onclick="goToActionPlan(${level})" aria-label="Show action plan for level ${level}">→ Show Action Plan</button>
+              `;
+            });
+          }
+        });
+      });
     }
 
     function goToActionPlan(level) {
-      document.querySelector('#guidanceScreen').style.display = 'none';
-      document.querySelector('#actionScreen').style.display = 'flex';
+      if (!validateLevel(level)) {
+        console.error('Invalid level for action plan:', level);
+        return;
+      }
+      
+      debounceClick(() => {
+        transitionToScreen('guidanceScreen', 'actionScreen', () => {
+          const rawText = actionPlans[level] || "Your custom action steps go here.";
+          const formattedText = formatActionText(rawText);
+          
+          safeElementOperation('actionText', el => {
+            el.innerHTML = formattedText;
+            el.scrollTop = 0;
+          });
+        });
+      });
+    }
 
-      const actionPlans = {
-        1: `🔴 Level 1: Deep Negativity
+    function goToGuidance() {
+      debounceClick(() => {
+        transitionToScreen('actionScreen', 'guidanceScreen');
+      });
+    }
 
-Goal:
-Rebuild basic emotional and physical safety.
+    function goBack() {
+      debounceClick(() => {
+        transitionToScreen('guidanceScreen', 'levelSelection');
+      });
+    }
 
-Action Plan:
-1. Reconnect with the present:
-   - Take 3 deep breaths. Name 5 objects around you.
-   - Place your hand on your chest and say: "I am safe. This will pass."
+    function endGame() {
+      debounceClick(() => {
+        // Сохраняем статистику сессии
+        gameState.sessionData.push({
+          endTime: Date.now(),
+          duration: Date.now() - gameState.startTime,
+          levelsExplored: Array.from(gameState.visitedLevels),
+          lastLevel: gameState.currentLevel
+        });
+        
+        // Сброс состояния для новой сессии
+        gameState.currentLevel = null;
+        gameState.visitedLevels.clear();
+        gameState.startTime = null;
+        
+        transitionToScreen('actionScreen', 'introScreen', () => {
+          updateProgressIndicator();
+        });
+      });
+    }
 
-2. Gentle body activation:
-   - Stretch, move fingers, roll neck. Step outside if possible.
+    // Поддержка клавиатуры
+    function handleKeyPress(event, level) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        selectLevel(level);
+      }
+    }
 
-3. Warmth and support:
-   - Message someone: "I'm struggling a bit right now."
-   - Wrap in a blanket or hold a pillow. Feel safe.
+    // Глобальная навигация с клавиатуры
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const currentScreen = document.querySelector('.overlay[style*="flex"]');
+        if (currentScreen && currentScreen.id !== 'introScreen') {
+          if (currentScreen.id === 'actionScreen') {
+            goToGuidance();
+          } else if (currentScreen.id === 'guidanceScreen') {
+            goBack();
+          }
+        }
+      }
+    });
 
-4. Micro tasks:
-   - Make your bed, wash your face, play calming music.
-   - One tiny victory is enough.
+    // Оптимизация производительности
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ленивая загрузка изображений
+      const images = ['background.png', 'container-background.png', 'logo.png', 'startbutton.png'];
+      images.forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
+      
+      // Предварительная компиляция регулярных выражений для форматирования
+      window.formatRegexes = {
+        numbers: /(\d+\.\s)/g,
+        headers: /(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g,
+        levels: /^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm
+      };
+    });
 
-5. Safe inner imagery:
-   - Visualize a calm place. Let your body feel it for 30+ sec.
+    // Данные для уровней
+    const guidanceTexts = {
+      1: "Level 1: Deep Negativity - Focus on basic self-care and reaching out for support. Small steps like deep breathing, gentle movement, or connecting with a trusted friend can help.",
+      2: "Level 2: Heavy Experiences - Allow yourself to feel these emotions without judgment. Consider journaling, meditation, or engaging in activities that bring small moments of comfort.",
+      3: "Level 3: Negative Activation - Channel this energy constructively through physical exercise, creative expression, or problem-solving. Take breaks to cool down when needed.",
+      4: "Level 4: Neutral Negativity - Explore new activities or perspectives. Sometimes a change of environment or engaging with different content can shift your state.",
+      5: "Level 5: Neutral State - This is a great foundation! Consider setting intentions, practicing gratitude, or engaging in activities that align with your values.",
+      6: "Level 6: Light Positivity - Build on this momentum with learning something new, connecting with others, or pursuing interests that inspire you.",
+      7: "Level 7: Active Positivity - Great energy for taking action on goals, helping others, or engaging in challenging but rewarding activities.",
+      8: "Level 8: High Positivity - Share this joy with others, celebrate achievements, and consider how you can maintain this positive state.",
+      9: "Level 9: Peak States - Embrace this beautiful state while staying grounded. Consider how you can integrate these feelings of connection and love into daily life."
+    };
 
-⚠️ Emotional Traps:
-- Isolation: don't disappear — message someone.
-- Social comparison: avoid social media.
-- Harsh self-talk: be kind, not forceful.
-- Shame spirals: pain ≠ brokenness.`,
+    const actionPlans = {
+      1: `🔴 Level 1: Rock Bottom – Despair / Apathy / Collapse
+💬 Typical Emotional State:
+You feel utterly depleted — like nothing matters. There may be a sense of void, emotional numbness, or internal collapse.
+This is the lowest emotional frequency, often marked by deep despair, isolation, or complete lack of motivation.
 
-        2: `🟠 Level 2: Heavy Experiences
+🧠 Associated Emotions:
+Apathy
 
-Goal:
-Gently reawaken emotional awareness and build quiet strength.
+Deep Grief
 
-Action Plan:
-1. Acknowledge your numbness:
-   - It's okay to feel nothing. Don't force yourself to "be okay."
-   - Say: "Even numbness is a signal. I am still here."
+Numbness
 
-2. Gentle sensory input:
-   - Light a candle, hold something warm, or take a bath.
-   - Listen to soft instrumental music or nature sounds.
+Total Fatigue
 
-3. Emotional reentry:
-   - Watch a moving video, look at meaningful photos.
-   - Journal: "If I could feel anything right now, what might it be?"
+Hopelessness
 
-4. Micro-movements:
-   - Walk slowly. Stretch arms and shoulders. Lay in sunlight.
-   - Allow stillness but not stagnation.
+Collapse
 
-5. Symbolic acts:
-   - Make tea. Light incense. Rearrange a corner of your room.
-   - Small rituals can reconnect you with meaning.
+Suicidal Thoughts (in extreme cases)
 
-⚠️ Emotional Traps:
-- "Nothing matters" mindset — challenge it gently.
-- Over-sleeping or total shutdown — allow rest, but add light structure.
-- Pretending you're fine — be honest with one person you trust.
-- Substance numbing — avoid alcohol or over-scrolling.`,
+Emotional Freeze
 
-        3: `🟠 Level 3: Negative Activation
+Emptiness
 
-Typical Emotional State:
-Tense, restless, irritated, impulsive, scattered, hyper-activated but not focused.
-You feel like you're doing something — but not necessarily the right things.
+⚠️ Common Pitfalls / Hidden Traps:
+Complete disconnection from reality or the body
 
-Associated Emotions:
-Frustration, Anxiety, Stress, Impatience, Overwhelm, Confusion, Agitation, Urgency
+Belief that nothing can help or change
 
-🔍 Key Traits of This Level:
-You're active — but it's often reactive, not conscious or strategic.
-Often triggered by a fear of falling behind, missing out, or being judged.
-You might appear productive on the outside, but inside there's chaotic urgency.
+Isolation becomes seductive — "No one gets it, so why try"
+
+Self-abandonment or emotional shutdown
+
+Suicidal ideation or existential dread if left unchecked
+
+Note: This level can be clinical. If someone is stuck here for days or weeks, professional support may be required.
+
+🪜 Strategies to Begin Moving Up:
+The goal here is not motivation, but activation — to wake up the system gently.
+
+Gentle physical stimulation
+
+Take a cold or warm shower. Move fingers or stretch slowly. Even 1 push-up counts.
+
+Basic sensory grounding
+
+Light a scented candle, listen to calming music, touch something soft. Come back into the body.
+
+Micro-commitment
+
+Promise to do one tiny thing today: drink a glass of water, open a window, brush your teeth.
+
+Compassionate voice
+
+Say: “It’s okay to feel this. I’m still here.”
+Use a journal or voice note — even 10 seconds helps.
+
+Connect — even passively
+
+Listen to a podcast, message someone “I’m here,” or ask for a hug. Even if it feels fake — do it.
+
+🧨 Risk Snapshot:
+Getting stuck in an emotional freeze
+
+Letting shame block any attempts at change (“I should be stronger”)
+
+Using substances or distractions to escape (binge-watching, alcohol, doom-scrolling)
+
+🛠️ Supportive Practices:
+Nap + hydrate (this helps regulate cortisol + adrenaline)
+
+Pet an animal or hug a pillow (oxytocin release)
+
+Crying (if it comes) — is a healthy nervous system release
+
+Speak to one safe person — even if only to say “I’m not okay”
+
+🧭 Reframe for Growth:
+This is not your forever state.
+You are not broken — you're overloaded, under-supported, or simply burned out.
+Your system shut down to protect itself. Now we gently reboot.`,
+
+      2: `🔴 Level 2: Heavy Experiences – Emotional Fatigue, Numbness, and Despair Under the Surface
+💬 Typical Emotional State:
+You're functional but disconnected. You might be going through the motions, but inside — you feel disappointed, emotionally flat, or hopeless. This is the “low-battery mode” of life: not rock bottom, but not alive either.
+
+🧠 Associated Emotions:
+Disappointed
+
+Emotionally Exhausted
+
+Empty
+
+Numb
+
+Hopeless
+
+Withdrawn
+
+Resigned
+
+Bored but unable to act
+
+Quiet sadness that doesn’t speak
 
 ⚠️ Common Pitfalls / Traps:
-- Overreacting — sending messages, quitting, or deciding things impulsively.
-- Overcommitting — saying yes to everything because of pressure or fear of missing out.
-- Avoiding root causes — staying "busy" to avoid uncomfortable introspection.
-- Misinterpreting stress as motivation — mistaking tension for momentum.
-- Making rushed decisions — buying things, launching too soon, miscommunicating.
+Going on autopilot, pretending everything’s fine
+
+Emotional suppression (“I shouldn’t feel this way”)
+
+Losing touch with desire — you forget what excites you
+
+Engaging in silent sabotage (procrastination, isolation, checking out)
+
+Comparison to others who seem “ahead” or “more alive”
+
+🪜 Strategies to Move Up:
+Name it to claim it
+
+Identify your exact feeling. Use the Emotion Wheel if needed.
+
+Say it out loud or write: “I feel ___ right now.”
+
+Nourishing movement
+
+Gentle yoga, a slow walk, 5 minutes of dancing. The goal is not “exercise,” but reconnecting with your body.
+
+Tiny pleasures
+
+Drink your favorite tea. Sit in the sun. Put on music that feels like home.
+→ These spark micro-emotions, essential for recovery.
+
+Talk to someone without solutions
+
+Just be heard. Say: “I don’t need advice, I just need to vent.”
+
+Rediscover small purpose
+
+Make something. Write. Cook. Organize a drawer. Anything that reaffirms agency.
+
+🧨 Risks at This Level:
+Acting numb when you're actually overwhelmed
+
+Pushing through without addressing inner depletion
+
+Suppressing so long that emotions build up into anxiety or anger
+
+Mistaking apathy for laziness (“Why can’t I just be productive?”)
+
+🧠 Conscious Decision-Making:
+Don’t make big decisions from this level — they’re often rooted in avoidance or escape.
+
+Instead, ask:
+
+What do I need to feel 10% better?
+
+What is one boundary I need to re-establish?
+
+🧭 Reframe for Growth:
+This level often appears right before breakthroughs.
+The heaviness is a message: your system is saying “I can’t live like this anymore.”
+
+That’s not a weakness. That’s inner intelligence.`,
+
+      3: `🟠 Level 3: Negative Activation
+Typical Emotional State:
+Tense, restless, irritated, impulsive, scattered, hyper-activated but not focused.
+You feel like you’re doing something — but not necessarily the right things.
+
+Associated Emotions (from emotion wheels):
+
+Frustration
+
+Anxiety
+
+Stress
+
+Impatience
+
+Overwhelm
+
+Confusion
+
+Agitation
+
+Urgency
+
+Hyper-productivity (driven by fear, not clarity)
+
+🔍 Key Traits of This Level:
+You’re active — but it’s often reactive, not conscious or strategic.
+
+Often triggered by a fear of falling behind, missing out, or being judged.
+
+You might appear productive on the outside, but inside there’s chaotic urgency.
+
+⚠️ Common Pitfalls / Traps:
+Overreacting — sending messages, quitting, or deciding things impulsively.
+
+Overcommitting — saying yes to everything because of pressure or fear of missing out.
+
+Avoiding root causes — staying “busy” to avoid uncomfortable introspection.
+
+Misinterpreting stress as motivation — mistaking tension for momentum.
+
+Making rushed decisions — buying things, launching too soon, miscommunicating.
+
+⚡ Example: You feel anxious about your future, so you sign up for five courses… but don’t finish any of them.
 
 ✅ Strategies to Move Up to Constructive Energy / Clarity:
-1. Pause before reacting.
-   Ask: "Am I responding to reality, or to fear?"
+Pause before reacting.
 
-2. Rechannel the energy.
-   Go for a short run, do breathwork, shake out the tension, or dance — burn the static charge.
+Ask: “Am I responding to reality, or to fear?”
 
-3. Practice the 3-Minute Mind Dump.
-   Write every thought, to-do, and worry on paper. No filter. Just empty your mind.
+Rechannel the energy.
 
-4. Name the emotion honestly.
-   "I'm not just busy, I'm overwhelmed and scared I'll fail." Naming is taming.
+Go for a short run, do breathwork, shake out the tension, or dance — burn the static charge.
 
-5. Reconnect with your values.
-   Ask: "Is what I'm doing aligned with what actually matters to me?"
+Practice the 3-Minute Mind Dump.
 
-6. Focus on a single priority.
-   Pick one small task. Complete it slowly, mindfully. Feel the shift.
+Write every thought, to-do, and worry on paper. No filter. Just empty your mind.
+
+Name the emotion honestly.
+
+"I'm not just busy, I’m overwhelmed and scared I’ll fail." Naming is taming.
+
+Reconnect with your values.
+
+Ask: "Is what I’m doing aligned with what actually matters to me?"
+
+Focus on a single priority.
+
+Pick one small task. Complete it slowly, mindfully. Feel the shift.
 
 ⚡ Power-Up Move:
-Do 30 seconds of "Box Breathing":
+Do 30 seconds of “Box Breathing”:
 Inhale 4s → Hold 4s → Exhale 4s → Hold 4s. Repeat 4 times.
-This activates the parasympathetic nervous system, reducing impulsivity and improving clarity.`,
+This activates the parasympathetic nervous system, reducing impulsivity and improving clarity.
+
+🚨 What to Watch Out For (Even When Improving):
+False clarity: After releasing tension, don't rush to make decisions immediately — give yourself a “cooldown.”
+
+Overconfidence: As energy rises, be cautious of manic optimism (e.g., sudden risky investments).
+
+External validation loop: Don’t let momentum be hijacked by social media likes or praise — stay internally focused.
+
+🧭 Reframing This Stage:
+This is not a bad stage — it’s just unrefined power.
+Think of it like steam building up in a pressure cooker. You can either explode or redirect the energy into useful motion.`,
 
         4: `🟡 Level 4: Stabilization & Neutral
-
 Typical Emotional State:
-Balanced, calm, indifferent, grounded, "okay."
-You're no longer reactive — but not yet inspired or energized either.
+Balanced, calm, indifferent, grounded, “okay.”
+You’re no longer reactive — but not yet inspired or energized either.
 A crucial pivot point in the emotional ladder.
 
 🌤️ Associated Emotions:
-Neutral, Stable, Content, Accepting, Mild interest, Calm, Open, Reflective, Centered
+Neutral
+
+Stable
+
+Content
+
+Accepting
+
+Mild interest
+
+Calm
+
+Open
+
+Reflective
+
+Centered
+
+Disconnected (but not negatively)
 
 ⚠️ Common Pitfalls / Hidden Traps:
-- Staying too long in "neutral gear" — comfortable but stagnant.
-- Mistaking stability for progress — no real movement forward.
-- Emotional numbness — confusing peace with disconnection.
-- Avoiding ambition — rejecting desire to avoid risk.
-- Procrastination disguised as presence — "I'm just going with the flow" without direction.
+Staying too long in “neutral gear” — comfortable but stagnant.
+
+Mistaking stability for progress — no real movement forward.
+
+Emotional numbness — confusing peace with disconnection.
+
+Avoiding ambition — rejecting desire to avoid risk.
+
+Procrastination disguised as presence — “I’m just going with the flow” without direction.
+
+🧠 Example: You feel better than before, but can't seem to push forward. You keep organizing, preparing, thinking — but not doing anything meaningful.
 
 ✅ Strategies to Move Up into Engagement & Positive Momentum:
-1. Reconnect with curiosity.
-   Ask: "What could be interesting right now?" or "What would feel satisfying to create or explore?"
+Reconnect with curiosity.
 
-2. Do a 5-minute "momentum builder" task.
-   Small win that gives a sense of progress: clean a drawer, send one email, sketch one idea.
+Ask: “What could be interesting right now?” or “What would feel satisfying to create or explore?”
 
-3. Visualize best-case future.
-   Use the "3 Months From Now" prompt:
-   "If I felt proud and aligned 3 months from now… what would I be doing today?"
+Do a 5-minute “momentum builder” task.
 
-4. Choose one low-stakes creative action.
-   Draw. Write freely. Reorganize your space. Make a playlist. Create without pressure.
+Small win that gives a sense of progress: clean a drawer, send one email, sketch one idea.
 
-5. Ground your body.
-   Light stretching, walking barefoot, tai chi, breath-led yoga — builds presence and energy.
+Visualize best-case future.
+
+Use the “3 Months From Now” prompt:
+“If I felt proud and aligned 3 months from now… what would I be doing today?”
+
+Choose one low-stakes creative action.
+
+Draw. Write freely. Reorganize your space. Make a playlist. Create without pressure.
+
+Ground your body.
+
+Light stretching, walking barefoot, tai chi, breath-led yoga — builds presence and energy.
+
+Ask yourself:
+
+“What’s one area in life I’ve been putting off improving, but now feel ready to look at with honesty?”
 
 ⚡ Power-Up Move:
-Do the "Energy Check-In":
-- Body: How do I feel physically?
-- Mind: What's the loudest thought?
-- Emotion: What's the background emotion?
-- Soul: What do I quietly desire?
+Do the “Energy Check-In”:
 
-This creates internal coherence and readiness for flow.`,
+Body: How do I feel physically?
+
+Mind: What’s the loudest thought?
+
+Emotion: What’s the background emotion?
+
+Soul: What do I quietly desire?
+
+This creates internal coherence and readiness for flow.
+
+🚨 What to Watch Out For (Even at This Good Stage):
+Safe zone syndrome: You’ve exited chaos, but resist challenge.
+
+“Everything’s fine” mode: Progress slows because urgency is gone.
+
+Over-reflection without action.
+
+Disconnection from deeper desire — you may settle for comfort, not vitality.
+
+🧭 Reframe for Growth:
+This level is a launchpad, not a resting place.
+Stability gives you the platform to build.
+From here, you can consciously direct energy into purpose, joy, and deeper flow — but you must choose to act.`,
 
         5: `🟡 Level 5: Willingness / Hope / Mild Positivity
-
 Typical Emotional State:
-You're open. Curious. Ready to engage.
+You’re open. Curious. Ready to engage.
 Not quite inspired, but no longer stuck — this is the beginning of upward momentum.
 
 🌟 Associated Emotions:
-Hopeful, Optimistic, Interested, Willing, Curious, Open-minded, Encouraged, Eager (mildly), Motivated (starting to emerge)
+Hopeful
+
+Optimistic
+
+Interested
+
+Willing
+
+Curious
+
+Open-minded
+
+Encouraged
+
+Eager (mildly)
+
+Motivated (starting to emerge)
 
 ⚠️ Common Pitfalls / Hidden Traps:
-- Overestimating readiness — taking on too much too fast can overwhelm this delicate stage.
-- Lack of clear direction — momentum without aim leads to scattered effort.
-- Relying too much on external validation — still not fully rooted in intrinsic drive.
-- Avoiding deeper internal work — trying to "stay positive" without resolving lingering issues.
+Overestimating readiness — taking on too much too fast can overwhelm this delicate stage.
+
+Lack of clear direction — momentum without aim leads to scattered effort.
+
+Relying too much on external validation — still not fully rooted in intrinsic drive.
+
+Avoiding deeper internal work — trying to "stay positive" without resolving lingering issues.
+
+🧠 Example: You start a project with enthusiasm but abandon it after two days. Energy is rising — but lacks structure or grounding.
 
 ✅ Strategies to Move Up into True Positivity & Flow:
-1. Set small, clear intentions.
-   Not massive goals — just a next step with meaning (e.g. "Reach out to one person I admire").
+Set small, clear intentions.
 
-2. Track micro-wins.
-   Each small success builds confidence and reinforces upward movement. Try journaling "3 wins a day."
+Not massive goals — just a next step with meaning (e.g. “Reach out to one person I admire”).
 
-3. Practice emotional momentum.
-   Notice and extend moments when you feel uplifted (amplify instead of dismissing them).
+Track micro-wins.
 
-4. Connect with purpose, not pressure.
-   Ask: "Why does this matter to me personally?" Focus on contribution and meaning.
+Each small success builds confidence and reinforces upward movement. Try journaling “3 wins a day.”
 
-5. Use movement to shift energy.
-   Dance, walk with intention, tidy your space with music — use your body to support forward emotion.
+Practice emotional momentum.
 
-6. Surround yourself with inspiration.
-   Podcasts, people, quotes — everything around you should reinforce upward direction.
+Notice and extend moments when you feel uplifted (amplify instead of dismissing them).
+
+Connect with purpose, not pressure.
+
+Ask: “Why does this matter to me personally?” Focus on contribution and meaning.
+
+Use movement to shift energy.
+
+Dance, walk with intention, tidy your space with music — use your body to support forward emotion.
+
+Surround yourself with inspiration.
+
+Podcasts, people, quotes — everything around you should reinforce upward direction.
 
 ⚡ Power-Up Move:
-Do a "Courage Ritual" —
-Commit to one thing today that's slightly uncomfortable but aligned with growth (send a pitch, ask a question, apply to something).
+Do a “Courage Ritual” —
+Commit to one thing today that’s slightly uncomfortable but aligned with growth (send a pitch, ask a question, apply to something).
 This builds emotional muscle and trust in yourself.
+
+🚨 What to Watch Out For:
+“Toxic optimism” — skipping over real fears or doubts in favor of forced positivity.
+
+Shiny-object syndrome — jumping from one idea to another without finishing.
+
+Premature self-comparison — seeing others further ahead and spiraling downward again.
+
+Fear of momentum — low-key sabotage due to fear of success.
 
 🧭 Reframe for Growth:
 Willingness is the bridge between neutrality and creativity.
-It's where real personal transformation begins — not in massive breakthroughs, but in small consistent actions.
+It’s where real personal transformation begins — not in massive breakthroughs, but in small consistent actions.
 This is where the Flow state starts to become possible — as your energy and trust return.`,
 
         6: `🟡 Level 6: Contentment / Calm Joy / Satisfaction
-
 🌿 Typical Emotional State:
 You feel good — not ecstatic, but grounded and genuinely okay.
-There's a sense of peace, lightness, and presence. You're not rushing, not grasping — and that's powerful.
+There’s a sense of peace, lightness, and presence. You’re not rushing, not grasping — and that's powerful.
 
-🌟 Associated Emotions:
-Calm, Relaxed, Satisfied, Grateful, Light-hearted, Present, Balanced, Comfortable, Steady, Appreciative
+🌟 Associated Emotions (from Wheel references):
+Calm
+
+Relaxed
+
+Satisfied
+
+Grateful
+
+Light-hearted
+
+Present
+
+Balanced
+
+Comfortable
+
+Steady
+
+Appreciative
 
 ✅ Strategies to Move Up into Enthusiasm, Passion & Flow:
-1. Tune into gratitude.
-   Identify 3 small things that bring you peace right now (e.g., sunlight, coffee aroma, a finished task).
+Tune into gratitude.
 
-2. Create from stillness.
-   This is a great place to write, plan, or make art — without pressure.
+Identify 3 small things that bring you peace right now (e.g., sunlight, coffee aroma, a finished task).
 
-3. Simplify.
-   Let go of tasks or ideas that clutter your mind. Focus on what matters most today.
+Create from stillness.
 
-4. Go deeper with presence.
-   Practice mindfulness. Slow meals, mindful walks, gentle meditation. These amplify contentment.
+This is a great place to write, plan, or make art — without pressure.
 
-5. Share light energy.
-   A simple compliment, a smile, or helping hand deepens your own experience of well-being.
+Simplify.
 
-6. Do small acts of alignment.
-   Tidy a corner, stretch your back, drink water. Harmony in small actions reinforces this stable energy.
+Let go of tasks or ideas that clutter your mind. Focus on what matters most today.
+
+Go deeper with presence.
+
+Practice mindfulness. Slow meals, mindful walks, gentle meditation. These amplify contentment.
+
+Share light energy.
+
+A simple compliment, a smile, or helping hand deepens your own experience of well-being.
+
+Do small acts of alignment.
+
+Tidy a corner, stretch your back, drink water. Harmony in small actions reinforces this stable energy.
 
 ⚠️ Common Pitfalls / Hidden Traps:
-- Complacency: Staying in contentment too long can cause stagnation or missed growth opportunities.
-- Fear of shaking peace: Avoiding challenges because they may disturb your balance (which can block progress).
-- Underestimating your potential: Settling for "okay" when you're ready for "amazing."
+Complacency.
+
+Staying in contentment too long can cause stagnation or missed growth opportunities.
+
+Fear of shaking peace.
+
+Avoiding challenges because they may disturb your balance (which can block progress).
+
+Underestimating your potential.
+
+Settling for “okay” when you’re ready for “amazing.”
+
+🧠 Example: You feel good and don't want to ruin it — so you put off sending that important application. But staying here too long can mean missing the window of momentum.
 
 🔥 Power-Up Move:
-Ask: "What would my calmest, wisest self gently stretch into right now?"
+Ask: “What would my calmest, wisest self gently stretch into right now?”
 Then do that. Keep it light, but directed.
+
+🚨 What to Watch Out For:
+Pleasure over purpose.
+
+Staying in comfort zones at the expense of growth.
+
+Drift mode.
+
+Floating through days without checking alignment.
+
+Fading emotional edge.
+
+Losing passion if contentment turns into disengagement.
 
 🧭 Reframe for Growth:
 Contentment is a powerful launchpad.
 From here, you can build sustainable momentum toward creative energy, passion, and purpose — without burning out.
-Enjoy it — but don't settle if your soul is calling for more.`,
+Enjoy it — but don’t settle if your soul is calling for more.`,
 
         7: `🟡 Level 7: Optimism / Curiosity / Interest
-
 🌟 Typical Emotional State:
 This level is your turning point. You begin to look toward the future with hope.
 Your mind starts generating ideas, asking questions, wanting to move toward something.
 
-💬 Associated Emotions:
-Curious, Interested, Hopeful, Optimistic, Open-minded, Playful, Engaged, Alert, Energetic, Lightly Motivated
+💬 Associated Emotions (from Wheel & Ladder references):
+Curious
+
+Interested
+
+Hopeful
+
+Optimistic
+
+Open-minded
+
+Playful
+
+Engaged
+
+Alert
+
+Energetic
+
+Lightly Motivated
 
 ✅ Strategies to Move Up into Enthusiasm & Inspired Action:
-1. Follow the spark.
-   Ask: "What feels interesting right now?" Then give it 15–30 minutes of focused attention.
+Follow the spark.
 
-2. Set a micro-goal.
-   Not a big outcome. Just the next meaningful step — clarity fuels momentum.
+Ask: “What feels interesting right now?” Then give it 15–30 minutes of focused attention.
 
-3. Brainstorm freely.
-   Capture ideas without judging. Let imagination run before refining.
+Set a micro-goal.
 
-4. Change environments.
-   Move to a café, library, park, or new workspace. New surroundings = fresh curiosity.
+Not a big outcome. Just the next meaningful step — clarity fuels momentum.
 
-5. Ask better questions.
-   Shift from "Why can't I?" to "What's possible from here?"
+Brainstorm freely.
 
-6. Connect with other curious minds.
-   Share an idea with someone who energizes you — community multiplies interest.
+Capture ideas without judging. Let imagination run before refining.
+
+Change environments.
+
+Move to a café, library, park, or new workspace. New surroundings = fresh curiosity.
+
+Ask better questions.
+
+Shift from “Why can’t I?” to “What’s possible from here?”
+
+Connect with other curious minds.
+
+Share an idea with someone who energizes you — community multiplies interest.
 
 ⚠️ Common Pitfalls / Hidden Traps:
-- Scattered attention: Curiosity can fragment into distractions. Stay focused on aligned exploration.
-- Chronic ideation: Constant thinking without action = idea fatigue.
-- Overplanning: Trying to mentally map everything before beginning can kill the spark.
-- False starts: Jumping from one thing to the next without finishing anything leads to overwhelm.
+Scattered attention.
+
+Curiosity can fragment into distractions. Stay focused on aligned exploration.
+
+Chronic ideation.
+
+Constant thinking without action = idea fatigue.
+
+Strategy: Balance 1 idea with 1 concrete step.
+
+Overplanning.
+
+Trying to mentally map everything before beginning can kill the spark.
+
+False starts.
+
+Jumping from one thing to the next without finishing anything leads to overwhelm.
 
 🔥 Power-Up Move:
-Start a "Momentum Journal."
+Start a “Momentum Journal.”
 Each day, note:
-- What sparked curiosity?
-- What 1 thing did you try or explore?
-- What's worth continuing?
+
+What sparked curiosity?
+
+What 1 thing did you try or explore?
+
+What’s worth continuing?
+
+🚨 What to Watch For:
+Seeking novelty for escape.
+
+Curiosity used to avoid discomfort, not to grow.
+
+Fear of failing early.
+
+At this stage, experimentation > perfection — don’t hold back.
 
 🧭 Reframe for Growth:
 This level is about opening doors.
-You don't need to know everything — you just need to trust that exploring will reveal the path.
-Curiosity is a bridge to higher energy and flow.`,
+You don’t need to know everything — you just need to trust that exploring will reveal the path.
+
+Curiosity is a bridge to higher energy and flow.
+Use it well — and you’ll soon be in states of joy, creativity, and even personal breakthroughs.`,
 
         8: `🟡 Level 8: Enthusiasm / Motivation / Purpose
-
 🌟 Typical Emotional State:
-Now you're fully engaged. You've moved from thinking to doing — and you feel aligned with your actions.
-There's a sense of inner drive, direction, and upliftment.
+Now you’re fully engaged. You’ve moved from thinking to doing — and you feel aligned with your actions.
+There’s a sense of inner drive, direction, and upliftment.
 
 💬 Associated Emotions:
-Enthusiastic, Motivated, Purposeful, Eager, Excited, Empowered, Inspired, Focused, Confident, Joyfully Determined
+Enthusiastic
+
+Motivated
+
+Purposeful
+
+Eager
+
+Excited
+
+Empowered
+
+Inspired
+
+Focused
+
+Confident
+
+Joyfully Determined
 
 ✅ Strategies to Move Up Toward Passion / Joy:
-1. Channel energy into aligned action.
-   Use this energy to build momentum on what truly matters. Prioritize meaningful projects.
+Channel energy into aligned action.
 
-2. Reconnect with purpose.
-   Ask: Why is this important to me? Who am I doing this for?
+Use this energy to build momentum on what truly matters. Prioritize meaningful projects.
 
-3. Create momentum rituals.
-   Start the day with a short win or micro habit to reinforce motivation.
+Reconnect with purpose.
 
-4. Celebrate progress.
-   Acknowledge small achievements — it locks in positive reinforcement and keeps energy flowing.
+Ask: Why is this important to me? Who am I doing this for?
 
-5. Work in deep-focus blocks.
-   90 minutes of uninterrupted, immersive work helps you drop into flow faster.
+Create momentum rituals.
+
+Start the day with a short win or micro habit to reinforce motivation.
+
+Celebrate progress.
+
+Acknowledge small achievements — it locks in positive reinforcement and keeps energy flowing.
+
+Work in deep-focus blocks.
+
+90 minutes of uninterrupted, immersive work helps you drop into flow faster.
 
 ⚠️ Common Pitfalls / Hidden Traps:
-- Overexcitement → burnout: Riding high can tempt you to overcommit. Remember: energy is renewable, not infinite.
-- Losing touch with rest: Enthusiasm can mask exhaustion. Schedule recovery just like action.
-- Tunnel vision: Too much focus can block helpful feedback or new opportunities. Stay open while staying driven.
-- Chasing passion for its own sake: If you pursue "hype" rather than alignment, you risk crashing when things get hard.
+Overexcitement → burnout.
+
+Riding high can tempt you to overcommit. Remember: energy is renewable, not infinite.
+
+Losing touch with rest.
+
+Enthusiasm can mask exhaustion. Schedule recovery just like action.
+
+Tunnel vision.
+
+Too much focus can block helpful feedback or new opportunities. Stay open while staying driven.
+
+Chasing passion for its own sake.
+
+If you pursue “hype” rather than alignment, you risk crashing when things get hard.
 
 🔥 Power-Up Move:
-The "Why 5x" Drill
-Take a task and ask "Why is this important to me?"
+The “Why 5x” Drill
+Take a task and ask “Why is this important to me?”
 Then repeat your answer 5 times, each time going deeper.
-You'll uncover intrinsic motivation — the fuel that lasts.
+You’ll uncover intrinsic motivation — the fuel that lasts.
+
+🚨 What to Watch For:
+Acting impulsively just because energy is high
+
+Making big decisions (e.g., quitting job, starting business, ending relationship) without grounding
+
+Ignoring emotional signs of fatigue because “I’m on a roll”
 
 🧭 Reframe for Growth:
 This level is where meaning meets energy.
-It's not just about doing more — it's about doing what moves you and feeling that fire as fuel.
+It’s not just about doing more — it’s about doing what moves you and feeling that fire as fuel.
 If you learn to harness it wisely, enthusiasm becomes a gateway to Flow and Peak States.`,
 
         9: `🟡 Level 9: Passion / Flow / Excitement
-
 🌟 Typical Emotional State:
 This is where you're in the zone. Time dilates. Energy feels limitless.
-You're deeply aligned — emotionally, mentally, even physically — and it shows in your performance, joy, and clarity.
+You’re deeply aligned — emotionally, mentally, even physically — and it shows in your performance, joy, and clarity.
 
 💬 Associated Emotions:
-Passionate, Flowing, Electrified, Empowered, Absorbed, Alive, Vibrant, Ecstatic, Creative, Limitless
+Passionate
+
+Flowing
+
+Electrified
+
+Empowered
+
+Absorbed
+
+Alive
+
+Vibrant
+
+Ecstatic
+
+Creative
+
+Limitless
 
 ✅ Strategies to Sustain or Deepen the State:
-1. Minimize distractions.
-   Protect your flow space. Turn off notifications. Set boundaries.
+Minimize distractions.
 
-2. Ride the wave, but don't over-surf.
-   Work in cycles. Use Pomodoro-style sprints and scheduled breaks to avoid burnout.
+Protect your flow space. Turn off notifications. Set boundaries.
 
-3. Balance emotion with structure.
-   Flow thrives on freedom within form. Define goals, then surrender to the process.
+Ride the wave, but don’t over-surf.
 
-4. Reflect and integrate.
-   After a peak session, pause. What worked? What triggered flow? Capture it.
+Work in cycles. Use Pomodoro-style sprints and scheduled breaks to avoid burnout.
 
-5. Keep the nervous system stable.
-   High excitement can crash into fatigue. Nourish your body: hydrate, breathe, stretch.
+Balance emotion with structure.
+
+Flow thrives on freedom within form. Define goals, then surrender to the process.
+
+Reflect and integrate.
+
+After a peak session, pause. What worked? What triggered flow? Capture it.
+
+Keep the nervous system stable.
+
+High excitement can crash into fatigue. Nourish your body: hydrate, breathe, stretch.
 
 ⚠️ Common Pitfalls / Hidden Traps:
-- Flow addiction: Chasing only peak states can lead to avoidance of necessary low-energy tasks.
-- Overconfidence: Excitement can cause poor decisions — risky investments, impulsive promises, or skipping due diligence.
-- Ignoring your needs: Flow can make you forget hunger, fatigue, or emotional undercurrents. Check in with your body.
-- Romanticizing chaos: Passion without grounding can feel powerful, but becomes unstable over time.
+Flow addiction.
+
+Chasing only peak states can lead to avoidance of necessary low-energy tasks.
+
+Overconfidence.
+
+Excitement can cause poor decisions — risky investments, impulsive promises, or skipping due diligence.
+
+Ignoring your needs.
+
+Flow can make you forget hunger, fatigue, or emotional undercurrents. Check in with your body.
+
+Romanticizing chaos.
+
+Passion without grounding can feel powerful, but becomes unstable over time.
 
 🧨 Risk Snapshot:
-- You might trust too easily → scams / manipulation
-- You might scale too fast without foundation
-- You might neglect relationships or self-care chasing creative highs
+You might trust too easily → scams / manipulation
+
+You might scale too fast without foundation
+
+You might neglect relationships or self-care chasing creative highs
 
 🛠️ Grounding Practices:
-- Do a 5-minute body scan
-- Journal after each high-flow moment to reflect, not just rush forward
-- Walk in nature to discharge excessive energy
-- Anchor your excitement in values and long-term vision
+Do a 5-minute body scan
+
+Journal after each high-flow moment to reflect, not just rush forward
+
+Walk in nature to discharge excessive energy
+
+Anchor your excitement in values and long-term vision
 
 🧭 Reframe for Growth:
-Flow is not a goal — it's a side effect of clarity, alignment, and surrender.
+Flow is not a goal — it’s a side effect of clarity, alignment, and surrender.
 Use it as a signal that you're on the right path, not as a drug to escape low states.
-You're not chasing the feeling — you're becoming the person who lives in that frequency more often.`
+You’re not chasing the feeling — you’re becoming the person who lives in that frequency more often.`
+    };
+
+    // Управление громкостью
+    let currentVolume = 0.3;
+    
+    function createVolumeControl() {
+      const volumeControl = document.createElement('div');
+      volumeControl.id = 'volumeControl';
+      volumeControl.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 25px;
+        padding: 10px 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      `;
+      
+      volumeControl.innerHTML = `
+        <span style="font-size: 1.2em;">🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="${currentVolume}" 
+               style="width: 80px; cursor: pointer;">
+        <span id="volumeValue" style="font-size: 0.8em; color: #666; min-width: 30px;">${Math.round(currentVolume * 100)}%</span>
+      `;
+      
+      document.body.appendChild(volumeControl);
+      
+      const slider = document.getElementById('volumeSlider');
+      const valueDisplay = document.getElementById('volumeValue');
+      const backgroundMusic = document.getElementById('backgroundMusic');
+      
+      slider.addEventListener('input', function() {
+        currentVolume = parseFloat(this.value);
+        if (backgroundMusic) {
+          backgroundMusic.volume = currentVolume;
+        }
+        valueDisplay.textContent = Math.round(currentVolume * 100) + '%';
+        
+        // Меняем иконку в зависимости от громкости
+        const icon = volumeControl.querySelector('span');
+        if (currentVolume === 0) {
+          icon.textContent = '🔇';
+        } else if (currentVolume < 0.5) {
+          icon.textContent = '🔉';
+        } else {
+          icon.textContent = '🔊';
+        }
+      });
+    }
+
+    // Инициализация контрола громкости при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+      createVolumeControl();
+      
+      // Ленивая загрузка изображений
+      const images = ['background.png', 'container-background.png', 'logo.png', 'startbutton.png'];
+      images.forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
+      
+      // Предварительная компиляция регулярных выражений для форматирования
+      window.formatRegexes = {
+        numbers: /(\d+\.\s)/g,
+        headers: /(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g,
+        levels: /^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm
       };
+    });
 
-      document.getElementById('actionText').textContent = actionPlans[level] || "Your custom action steps go here.";
+    // Обновленная функция форматирования текста
+    function formatActionText(text) {
+      if (!text) return '';
+      
+      return text
+        .replace(/(\d+\.\s)/g, '<strong>$1</strong>')
+        .replace(/(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g, '<strong>$1</strong>')
+        .replace(/^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm, '<div class="level-highlight"><strong>$1$2</strong></div>');
     }
 
-    function goToGuidance() {
-      document.querySelector('#actionScreen').style.display = 'none';
-      document.querySelector('#guidanceScreen').style.display = 'flex';
-    }
-
-    function endGame() {
-      document.querySelector('#actionScreen').style.display = 'none';
-      document.querySelector('#introScreen').style.display = 'flex';
-    }
-
-    function goBack() {
-      document.querySelector('#guidanceScreen').style.display = 'none';
-      document.querySelector('#levelSelection').style.display = 'flex';
-    }
+    console.log('Flow Game loaded successfully');
   </script>
 </body>
 </html>
