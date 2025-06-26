@@ -1,769 +1,720 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emotional Ladder - Your Journey to Better Feelings</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flow Game – Intro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background-image: url('background.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('background.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
 
-        .overlay {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.1));
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+    .overlay {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(255, 255, 255, 0.1));
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-        .game-container {
-            background-image: url('container-background.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
-            width: 100%;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+    .game-container {
+      background-image: url('container-background.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 800px;
+      width: 100%;
+      padding: 30px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeIn 1s ease-in-out;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
 
-        .welcome-screen {
-            animation: fadeIn 1s ease-in;
-        }
+    .logo {
+      background-image: url('logo.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      width: 240px;
+      height: 240px;
+      margin: 0 auto 20px;
+    }
 
-        .logo {
-            background-image: url('logo.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 240px;
-            height: 240px;
-            margin: 0 auto 20px;
-        }
+    .start-button {
+      background-image: url('startbutton.png');
+      background-size: cover;
+      background-position: center;
+      width: 200px;
+      height: 60px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin: 20px auto;
+      border-radius: 30px;
+      color: white;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      display: block;
+    }
 
-        h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
+    .start-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
 
-        .subtitle {
-            color: #7f8c8d;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            line-height: 1.6;
-            display: none;
-        }
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
 
-        .start-button {
-            background-image: url('startbutton.png');
-            background-size: cover;
-            background-position: center;
-            width: 200px;
-            height: 60px;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin: 20px auto;
-            border-radius: 30px;
-            color: white;
-            font-size: 1.2em;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }
+    .level-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
 
-        .start-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
+    .level-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      border-color: #667eea;
+    }
 
-        .level-selection {
-            display: none;
-            animation: slideIn 0.5s ease-out;
-        }
+    .level-emoji {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
 
-        .level-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
+    .level-title {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 8px;
+    }
 
-        .level-card {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: 2px solid transparent;
-            border-radius: 15px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            position: relative;
-            overflow: hidden;
-        }
+    .level-emotions {
+      font-size: 0.9em;
+      color: #7f8c8d;
+      line-height: 1.4;
+    }
 
-        .level-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-        }
+    .back-button {
+      background: rgba(149, 165, 166, 0.9);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.3s ease;
+      font-size: 1em;
+    }
 
-        .level-card.level-1::before { background: #e74c3c; }
-        .level-card.level-2::before { background: #e67e22; }
-        .level-card.level-3::before { background: #e74c3c; }
-        .level-card.level-4::before { background: #8b4513; }
-        .level-card.level-5::before { background: #95a5a6; }
-        .level-card.level-6::before { background: #f1c40f; }
-        .level-card.level-7::before { background: #27ae60; }
-        .level-card.level-8::before { background: #f39c12; }
-        .level-card.level-9::before { background: #2ecc71; }
+    .back-button:hover {
+      background: rgba(127, 140, 141, 0.9);
+      transform: translateY(-2px);
+    }
 
-        .level-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            border-color: #3498db;
-        }
+    .content-text {
+      color: #34495e;
+      font-size: 1.1em;
+      line-height: 1.6;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
 
-        .level-emoji {
-            font-size: 2em;
-            margin-right: 15px;
-            float: left;
-        }
+    .action-text {
+      color: #34495e;
+      font-size: 1.0em;
+      line-height: 1.5;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      max-height: 60vh;
+      overflow-y: auto;
+      white-space: pre-line;
+    }
 
-        .level-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .level-emotions {
-            color: #7f8c8d;
-            font-size: 0.95em;
-            line-height: 1.4;
-        }
+    @media (max-width: 768px) {
+      .game-container {
+        padding: 20px;
+        margin: 10px;
+        max-width: 600px;
+      }
 
-        .guidance-screen {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
-            text-align: left;
-        }
+      .logo {
+        width: 160px;
+        height: 160px;
+      }
 
-        .current-level {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
+      .level-grid {
+        grid-template-columns: 1fr;
+      }
 
-        .guidance-content {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-
-        .guidance-icon {
-            background-image: url('guidance-icon.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            width: 40px;
-            height: 40px;
-            display: inline-block;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        .guidance-title {
-            font-size: 1.4em;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        .technique-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .technique-item {
-            background: white;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #3498db;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .technique-item:hover {
-            transform: translateX(5px);
-        }
-
-        .technique-title {
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 25px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #27ae60, #229954);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .progress-indicator {
-            background-image: url('progress-bar.png');
-            background-size: cover;
-            height: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #3498db, #2ecc71);
-            border-radius: 5px;
-            transition: width 0.5s ease;
-        }
-
-        .music-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            background-image: url('music-icon.png');
-            background-size: 60%;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-100px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        @media (max-width: 768px) {
-            .game-container {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            .level-card {
-                padding: 15px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 250px;
-            }
-        }
-    </style>
+      .content-text, .action-text {
+        font-size: 0.95em;
+        padding: 15px;
+      }
+    }
+  </style>
 </head>
+  
 <body>
-    <audio id="backgroundMusic" loop>
-        <source src="music.mp3" type="audio/mpeg">
-    </audio>
-    
-    <button class="music-control" id="musicToggle" title="Toggle Music"></button>
-    
-    <div class="overlay">
-        <div class="game-container">
-            <!-- Welcome Screen -->
-            <div id="welcomeScreen" class="welcome-screen">
-                <div class="logo"></div>
-                <button class="start-button" onclick="startGame()">Start Your Journey</button>
-            </div>
+  <audio id="backgroundMusic" loop>
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
 
-            <!-- Level Selection Screen -->
-            <div id="levelSelection" class="level-selection">
-                <h2 style="color: #2c3e50; margin-bottom: 20px;">How are you feeling right now?</h2>
-                <p style="color: #7f8c8d; margin-bottom: 25px;">Choose the level that best describes your current emotional state:</p>
-                
-                <div class="level-grid">
-                    <div class="level-card level-1" onclick="selectLevel(1)">
-                        <div class="level-emoji">🔴</div>
-                        <div class="level-title">Level 1: Deep Negativity</div>
-                        <div class="level-emotions">Humiliated, Desperate, Depressed, Powerless</div>
-                    </div>
-                    
-                    <div class="level-card level-2" onclick="selectLevel(2)">
-                        <div class="level-emoji">🟠</div>
-                        <div class="level-title">Level 2: Heavy Experiences</div>
-                        <div class="level-emotions">Disappointed, Empty, Numb, Hopeless</div>
-                    </div>
-                    
-                    <div class="level-card level-3" onclick="selectLevel(3)">
-                        <div class="level-emoji">🔴</div>
-                        <div class="level-title">Level 3: Negative Activation</div>
-                        <div class="level-emotions">Angry, Irritated, Upset, Critical</div>
-                    </div>
-                    
-                    <div class="level-card level-4" onclick="selectLevel(4)">
-                        <div class="level-emoji">🟤</div>
-                        <div class="level-title">Level 4: Neutral Negativity</div>
-                        <div class="level-emotions">Bored, Embarrassed, Uncertain, Doubtful</div>
-                    </div>
-                    
-                    <div class="level-card level-5" onclick="selectLevel(5)">
-                        <div class="level-emoji">⚪</div>
-                        <div class="level-title">Level 5: Neutral State</div>
-                        <div class="level-emotions">Calm, Content, Relaxed, Focused</div>
-                    </div>
-                    
-                    <div class="level-card level-6" onclick="selectLevel(6)">
-                        <div class="level-emoji">🟡</div>
-                        <div class="level-title">Level 6: Light Positivity</div>
-                        <div class="level-emotions">Interested, Curious, Hopeful, Accepting</div>
-                    </div>
-                    
-                    <div class="level-card level-7" onclick="selectLevel(7)">
-                        <div class="level-emoji">🟢</div>
-                        <div class="level-title">Level 7: Active Positivity</div>
-                        <div class="level-emotions">Energetic, Motivated, Inspired, Confident</div>
-                    </div>
-                    
-                    <div class="level-card level-8" onclick="selectLevel(8)">
-                        <div class="level-emoji">🟡</div>
-                        <div class="level-title">Level 8: High Positivity</div>
-                        <div class="level-emotions">Joyful, Grateful, Enthusiastic, Playful</div>
-                    </div>
-                    
-                    <div class="level-card level-9" onclick="selectLevel(9)">
-                        <div class="level-emoji">💚</div>
-                        <div class="level-title">Peak States</div>
-                        <div class="level-emotions">Blissful, Enlightened, Ecstatic, Unconditionally Loving</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Guidance Screen -->
-            <div id="guidanceScreen" class="guidance-screen">
-                <div class="progress-indicator">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                
-                <div class="current-level" id="currentLevel"></div>
-                
-                <div class="guidance-content">
-                    <div class="guidance-title">
-                        <div class="guidance-icon"></div>
-                        <span id="guidanceTitle">Your Path Forward</span>
-                    </div>
-                    <ul class="technique-list" id="techniqueList"></ul>
-                </div>
-                
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="markCompleted()">I've Tried These</button>
-                    <button class="btn btn-secondary" onclick="goBack()">Choose Different Level</button>
-                    <button class="btn btn-success" onclick="moveToNext()" id="nextLevelBtn" style="display: none;">Move to Next Level</button>
-                </div>
-            </div>
-        </div>
+  <div id="introScreen" class="overlay">
+    <div class="game-container">
+      <div class="logo"></div>
+      <button class="start-button" onclick="startGame()">Start Your Journey</button>
     </div>
+  </div>
 
-    <script>
-        let currentLevel = 1;
-        let musicPlaying = false;
-        const backgroundMusic = document.getElementById('backgroundMusic');
-        
-        // Start music when Start Journey button is pressed
-        function startGame() {
-            // Start music
-            backgroundMusic.play().then(() => {
-                musicPlaying = true;
-                document.getElementById('musicToggle').style.opacity = '1';
-                console.log('Music started when game began');
-            }).catch(e => {
-                console.log('Could not start music:', e);
-                document.getElementById('musicToggle').style.opacity = '0.5';
-            });
-            
-            // Show level selection
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('levelSelection').style.display = 'block';
-        }
-        
-        const levelData = {
-            1: {
-                title: "Level 1: Deep Negativity",
-                emoji: "🔴",
-                emotions: "Humiliated, Desperate, Depressed, Powerless",
-                techniques: [
-                    {
-                        title: "Acknowledge Your Feelings",
-                        description: "Say to yourself: 'I feel terrible right now, and that's okay. This feeling will pass.'"
-                    },
-                    {
-                        title: "Basic Physical Care",
-                        description: "Take a shower, change into clean clothes, drink a glass of water slowly."
-                    },
-                    {
-                        title: "Micro-Steps",
-                        description: "Do one simple action: make your bed, wash a single cup, or tidy one small area."
-                    },
-                    {
-                        title: "Breathing Exercise",
-                        description: "Take 10 deep belly breaths. Breathe in for 4 counts, hold for 4, exhale for 6."
-                    }
-                ]
-            },
-            2: {
-                title: "Level 2: Heavy Experiences",
-                emoji: "🟠",
-                emotions: "Disappointed, Empty, Numb, Hopeless",
-                techniques: [
-                    {
-                        title: "Express Your Emotions",
-                        description: "Write down your feelings or tell someone you trust how you're feeling."
-                    },
-                    {
-                        title: "Shift External Focus",
-                        description: "Look out the window, listen to music, or watch something that interests you."
-                    },
-                    {
-                        title: "Gentle Movement",
-                        description: "Take a short walk, do light stretching, or any gentle physical activity."
-                    },
-                    {
-                        title: "Self-Compassion",
-                        description: "Talk to yourself the way a good friend would - with kindness and understanding."
-                    }
-                ]
-            },
-            3: {
-                title: "Level 3: Negative Activation",
-                emoji: "🔴",
-                emotions: "Angry, Irritated, Upset, Critical",
-                techniques: [
-                    {
-                        title: "Release Physical Energy",
-                        description: "Do physical exercise, clean vigorously, or engage in manual work to release tension."
-                    },
-                    {
-                        title: "Identify the Cause",
-                        description: "Ask yourself: 'What exactly am I angry about?' Be specific about the problem."
-                    },
-                    {
-                        title: "Change Perspective",
-                        description: "Consider: 'What would my best friend think about this situation?'"
-                    },
-                    {
-                        title: "Take Action",
-                        description: "Identify one concrete step you can take to improve the situation."
-                    }
-                ]
-            },
-            4: {
-                title: "Level 4: Neutral Negativity",
-                emoji: "🟤",
-                emotions: "Bored, Embarrassed, Uncertain, Doubtful",
-                techniques: [
-                    {
-                        title: "Accept Uncertainty",
-                        description: "Remind yourself: 'It's normal not to know all the answers. Uncertainty is part of life.'"
-                    },
-                    {
-                        title: "Explore Something New",
-                        description: "Learn about a topic that interests you, even if just for 15 minutes."
-                    },
-                    {
-                        title: "Small Experiments",
-                        description: "Try something new without big commitments - a new recipe, route, or activity."
-                    },
-                    {
-                        title: "Seek Connection",
-                        description: "Talk to someone about your doubts or uncertainties. Sometimes sharing helps clarify."
-                    }
-                ]
-            },
-            5: {
-                title: "Level 5: Neutral State",
-                emoji: "⚪",
-                emotions: "Calm, Content, Relaxed, Focused",
-                techniques: [
-                    {
-                        title: "Practice Gratitude",
-                        description: "Find 3 things you can genuinely appreciate about your current situation."
-                    },
-                    {
-                        title: "Plan Something Pleasant",
-                        description: "Think about something enjoyable you can look forward to in the near future."
-                    },
-                    {
-                        title: "Help Someone",
-                        description: "Do a small kind deed for someone - send a encouraging message or offer help."
-                    },
-                    {
-                        title: "Engage Creativity",
-                        description: "Engage in any creative process - drawing, writing, cooking, or problem-solving."
-                    }
-                ]
-            },
-            6: {
-                title: "Level 6: Light Positivity",
-                emoji: "🟡",
-                emotions: "Interested, Curious, Hopeful, Accepting",
-                techniques: [
-                    {
-                        title: "Explore Your Interests",
-                        description: "Dive deeper into something that attracts you - research, practice, or discuss it."
-                    },
-                    {
-                        title: "Connect Socially",
-                        description: "Spend time with people whose company you enjoy. Share your interests."
-                    },
-                    {
-                        title: "Learn and Grow",
-                        description: "Work on mastering a new skill or gaining knowledge in an area you care about."
-                    },
-                    {
-                        title: "Set Achievable Goals",
-                        description: "Plan small, realistic goals that you can accomplish in the coming days or weeks."
-                    }
-                ]
-            },
-            7: {
-                title: "Level 7: Active Positivity",
-                emoji: "🟢",
-                emotions: "Energetic, Motivated, Inspired, Confident",
-                techniques: [
-                    {
-                        title: "Take Meaningful Action",
-                        description: "Work on projects that are important to you and align with your values."
-                    },
-                    {
-                        title: "Share Your Journey",
-                        description: "Tell others about your plans, progress, and achievements. Celebrate together."
-                    },
-                    {
-                        title: "Embrace Challenges",
-                        description: "Step out of your comfort zone within safe limits. Take calculated risks."
-                    },
-                    {
-                        title: "Visualize Success",
-                        description: "Spend time imagining yourself achieving your goals. Make it vivid and detailed."
-                    }
-                ]
-            },
-            8: {
-                title: "Level 8: High Positivity",
-                emoji: "🟡",
-                emotions: "Joyful, Grateful, Enthusiastic, Playful",
-                techniques: [
-                    {
-                        title: "Celebrate Everything",
-                        description: "Mark even small victories and progress. Acknowledge your achievements openly."
-                    },
-                    {
-                        title: "Express Creativity",
-                        description: "Express yourself through art, music, dance, or any form of creative expression."
-                    },
-                    {
-                        title: "Embrace Play",
-                        description: "Don't forget about fun and humor. Engage in playful activities that bring joy."
-                    },
-                    {
-                        title: "Practice Deep Gratitude",
-                        description: "Regularly appreciate not just what you have, but who you are and your journey."
-                    }
-                ]
-            },
-            9: {
-                title: "Peak States",
-                emoji: "💚",
-                emotions: "Blissful, Enlightened, Ecstatic, Unconditionally Loving",
-                techniques: [
-                    {
-                        title: "Present Moment Awareness",
-                        description: "Be fully present and mindful. Experience this moment with complete awareness."
-                    },
-                    {
-                        title: "Service to Others",
-                        description: "Use this elevated state to help others. Share your light and positive energy."
-                    },
-                    {
-                        title: "Create Memory Anchors",
-                        description: "Create ways to remember and return to this state - through meditation, visualization, or triggers."
-                    },
-                    {
-                        title: "Embrace Humility",
-                        description: "Understand the temporary nature of all states. Appreciate this moment without attachment."
-                    }
-                ]
-            }
-        };
+  <!-- Level Selection Screen -->
+  <div id="levelSelection" class="overlay" style="display: none;">
+    <div class="game-container">
+      <h2 style="color: #2c3e50; margin-bottom: 20px;">How are you feeling right now?</h2>
+      <p style="color: #7f8c8d; margin-bottom: 25px;">Choose the level that best describes your current emotional state:</p>
+      <div class="level-grid">
+        <div class="level-card level-1" onclick="selectLevel(1)">
+          <div class="level-emoji">🔴</div>
+          <div class="level-title">Level 1: Deep Negativity</div>
+          <div class="level-emotions">Humiliated, Desperate, Depressed, Powerless</div>
+        </div>
+        <div class="level-card level-2" onclick="selectLevel(2)">
+          <div class="level-emoji">🟠</div>
+          <div class="level-title">Level 2: Heavy Experiences</div>
+          <div class="level-emotions">Disappointed, Empty, Numb, Hopeless</div>
+        </div>
+        <div class="level-card level-3" onclick="selectLevel(3)">
+          <div class="level-emoji">🔴</div>
+          <div class="level-title">Level 3: Negative Activation</div>
+          <div class="level-emotions">Angry, Irritated, Upset, Critical</div>
+        </div>
+        <div class="level-card level-4" onclick="selectLevel(4)">
+          <div class="level-emoji">🟤</div>
+          <div class="level-title">Level 4: Neutral Negativity</div>
+          <div class="level-emotions">Bored, Embarrassed, Uncertain, Doubtful</div>
+        </div>
+        <div class="level-card level-5" onclick="selectLevel(5)">
+          <div class="level-emoji">⚪</div>
+          <div class="level-title">Level 5: Neutral State</div>
+          <div class="level-emotions">Calm, Content, Relaxed, Focused</div>
+        </div>
+        <div class="level-card level-6" onclick="selectLevel(6)">
+          <div class="level-emoji">🟡</div>
+          <div class="level-title">Level 6: Light Positivity</div>
+          <div class="level-emotions">Interested, Curious, Hopeful, Accepting</div>
+        </div>
+        <div class="level-card level-7" onclick="selectLevel(7)">
+          <div class="level-emoji">🟢</div>
+          <div class="level-title">Level 7: Active Positivity</div>
+          <div class="level-emotions">Energetic, Motivated, Inspired, Confident</div>
+        </div>
+        <div class="level-card level-8" onclick="selectLevel(8)">
+          <div class="level-emoji">🟡</div>
+          <div class="level-title">Level 8: High Positivity</div>
+          <div class="level-emotions">Joyful, Grateful, Enthusiastic, Playful</div>
+        </div>
+        <div class="level-card level-9" onclick="selectLevel(9)">
+          <div class="level-emoji">💚</div>
+          <div class="level-title">Level 9: Peak States</div>
+          <div class="level-emotions">Blissful, Enlightened, Ecstatic, Unconditionally Loving</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Guidance Screen -->
+  <div id="guidanceScreen" class="overlay" style="display: none;">
+    <div class="game-container">
+      <h2 style="color: #2c3e50; margin-bottom: 20px;">Guidance & Techniques</h2>
+      <div id="guidanceText" class="content-text">
+        Here you will see your level-specific strategies.
+      </div>
+      <button class="back-button" onclick="goBack()">← Back to Levels</button>
+    </div>
+  </div>
 
+  <!-- Action Screen -->
+  <div id="actionScreen" class="overlay" style="display: none;">
+    <div class="game-container">
+      <h2 style="color: #2c3e50; margin-bottom: 20px;">Your Action Plan</h2>
+      <div id="actionText" class="action-text">
+        This is where your practical steps will appear.
+      </div>
+      <button class="back-button" onclick="goToGuidance()">← Back to Guidance</button>
+      <button class="start-button" onclick="endGame()">Finish</button>
+    </div>
+  </div>
 
-        function selectLevel(level) {
-            currentLevel = level;
-            showGuidance();
-        }
+  <script>
+    const backgroundMusic = document.getElementById("backgroundMusic");
 
-        function showGuidance() {
-            const data = levelData[currentLevel];
-            
-            document.getElementById('levelSelection').style.display = 'none';
-            document.getElementById('guidanceScreen').style.display = 'block';
-            
-            // Update progress bar
-            const progress = (currentLevel / 9) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            
-            // Update current level display
-            document.getElementById('currentLevel').innerHTML = `
-                <h2>${data.emoji} ${data.title}</h2>
-                <p style="margin-top: 10px; opacity: 0.9;">Current emotions: ${data.emotions}</p>
-            `;
-            
-            // Update techniques
-            const techniqueList = document.getElementById('techniqueList');
-            techniqueList.innerHTML = '';
-            
-            data.techniques.forEach(technique => {
-                const li = document.createElement('li');
-                li.className = 'technique-item';
-                li.innerHTML = `
-                    <div class="technique-title">${technique.title}</div>
-                    <div>${technique.description}</div>
-                `;
-                techniqueList.appendChild(li);
-            });
-            
-            // Update guidance title
-            if (currentLevel < 9) {
-                document.getElementById('guidanceTitle').textContent = `Path to Level ${currentLevel + 1}`;
-            } else {
-                document.getElementById('guidanceTitle').textContent = 'Maintaining Peak State';
-            }
-        }
+    function startGame() {
+      backgroundMusic.play().catch(() => {});
+      document.querySelector('#introScreen').style.display = 'none';
+      document.querySelector('#levelSelection').style.display = 'flex';
+    }
 
-        function markCompleted() {
-            if (currentLevel < 9) {
-                document.getElementById('nextLevelBtn').style.display = 'inline-block';
-                alert('Great work! You can now move to the next level when you feel ready, or continue practicing these techniques.');
-            } else {
-                alert('Wonderful! Continue integrating these peak state practices into your life.');
-            }
-        }
+    function selectLevel(level) {
+      document.querySelector('#levelSelection').style.display = 'none';
+      document.querySelector('#guidanceScreen').style.display = 'flex';
+      
+      const guidanceTexts = {
+        1: "Level 1: Deep Negativity - Focus on basic self-care and reaching out for support. Small steps like deep breathing, gentle movement, or connecting with a trusted friend can help.",
+        2: "Level 2: Heavy Experiences - Allow yourself to feel these emotions without judgment. Consider journaling, meditation, or engaging in activities that bring small moments of comfort.",
+        3: "Level 3: Negative Activation - Channel this energy constructively through physical exercise, creative expression, or problem-solving. Take breaks to cool down when needed.",
+        4: "Level 4: Neutral Negativity - Explore new activities or perspectives. Sometimes a change of environment or engaging with different content can shift your state.",
+        5: "Level 5: Neutral State - This is a great foundation! Consider setting intentions, practicing gratitude, or engaging in activities that align with your values.",
+        6: "Level 6: Light Positivity - Build on this momentum with learning something new, connecting with others, or pursuing interests that inspire you.",
+        7: "Level 7: Active Positivity - Great energy for taking action on goals, helping others, or engaging in challenging but rewarding activities.",
+        8: "Level 8: High Positivity - Share this joy with others, celebrate achievements, and consider how you can maintain this positive state.",
+        9: "Level 9: Peak States - Embrace this beautiful state while staying grounded. Consider how you can integrate these feelings of connection and love into daily life."
+      };
+      
+      document.getElementById('guidanceText').innerHTML = `
+        ${guidanceTexts[level]}
+        <br/><br/>
+        <button class="start-button" onclick="goToActionPlan(${level})">→ Show Action Plan</button>
+      `;
+    }
 
-        function moveToNext() {
-            if (currentLevel < 9) {
-                currentLevel++;
-                showGuidance();
-                document.getElementById('nextLevelBtn').style.display = 'none';
-            }
-        }
+    function goToActionPlan(level) {
+      document.querySelector('#guidanceScreen').style.display = 'none';
+      document.querySelector('#actionScreen').style.display = 'flex';
 
-        function goBack() {
-            document.getElementById('guidanceScreen').style.display = 'none';
-            document.getElementById('levelSelection').style.display = 'block';
-        }
+      const actionPlans = {
+        1: `🔴 Level 1: Deep Negativity
 
-        function toggleMusic() {
-            const musicToggle = document.getElementById('musicToggle');
-            
-            if (musicPlaying) {
-                backgroundMusic.pause();
-                musicToggle.style.opacity = '0.5';
-                musicPlaying = false;
-            } else {
-                backgroundMusic.play().catch(e => {
-                    console.log('Music autoplay prevented by browser');
-                });
-                musicToggle.style.opacity = '1';
-                musicPlaying = true;
-            }
-        }
+Goal:
+Rebuild basic emotional and physical safety.
 
-        // Initialize music control
-        document.getElementById('musicToggle').addEventListener('click', toggleMusic);
-    </script>
+Action Plan:
+1. Reconnect with the present:
+   - Take 3 deep breaths. Name 5 objects around you.
+   - Place your hand on your chest and say: "I am safe. This will pass."
+
+2. Gentle body activation:
+   - Stretch, move fingers, roll neck. Step outside if possible.
+
+3. Warmth and support:
+   - Message someone: "I'm struggling a bit right now."
+   - Wrap in a blanket or hold a pillow. Feel safe.
+
+4. Micro tasks:
+   - Make your bed, wash your face, play calming music.
+   - One tiny victory is enough.
+
+5. Safe inner imagery:
+   - Visualize a calm place. Let your body feel it for 30+ sec.
+
+⚠️ Emotional Traps:
+- Isolation: don't disappear — message someone.
+- Social comparison: avoid social media.
+- Harsh self-talk: be kind, not forceful.
+- Shame spirals: pain ≠ brokenness.`,
+
+        2: `🟠 Level 2: Heavy Experiences
+
+Goal:
+Gently reawaken emotional awareness and build quiet strength.
+
+Action Plan:
+1. Acknowledge your numbness:
+   - It's okay to feel nothing. Don't force yourself to "be okay."
+   - Say: "Even numbness is a signal. I am still here."
+
+2. Gentle sensory input:
+   - Light a candle, hold something warm, or take a bath.
+   - Listen to soft instrumental music or nature sounds.
+
+3. Emotional reentry:
+   - Watch a moving video, look at meaningful photos.
+   - Journal: "If I could feel anything right now, what might it be?"
+
+4. Micro-movements:
+   - Walk slowly. Stretch arms and shoulders. Lay in sunlight.
+   - Allow stillness but not stagnation.
+
+5. Symbolic acts:
+   - Make tea. Light incense. Rearrange a corner of your room.
+   - Small rituals can reconnect you with meaning.
+
+⚠️ Emotional Traps:
+- "Nothing matters" mindset — challenge it gently.
+- Over-sleeping or total shutdown — allow rest, but add light structure.
+- Pretending you're fine — be honest with one person you trust.
+- Substance numbing — avoid alcohol or over-scrolling.`,
+
+        3: `🟠 Level 3: Negative Activation
+
+Typical Emotional State:
+Tense, restless, irritated, impulsive, scattered, hyper-activated but not focused.
+You feel like you're doing something — but not necessarily the right things.
+
+Associated Emotions:
+Frustration, Anxiety, Stress, Impatience, Overwhelm, Confusion, Agitation, Urgency
+
+🔍 Key Traits of This Level:
+You're active — but it's often reactive, not conscious or strategic.
+Often triggered by a fear of falling behind, missing out, or being judged.
+You might appear productive on the outside, but inside there's chaotic urgency.
+
+⚠️ Common Pitfalls / Traps:
+- Overreacting — sending messages, quitting, or deciding things impulsively.
+- Overcommitting — saying yes to everything because of pressure or fear of missing out.
+- Avoiding root causes — staying "busy" to avoid uncomfortable introspection.
+- Misinterpreting stress as motivation — mistaking tension for momentum.
+- Making rushed decisions — buying things, launching too soon, miscommunicating.
+
+✅ Strategies to Move Up to Constructive Energy / Clarity:
+1. Pause before reacting.
+   Ask: "Am I responding to reality, or to fear?"
+
+2. Rechannel the energy.
+   Go for a short run, do breathwork, shake out the tension, or dance — burn the static charge.
+
+3. Practice the 3-Minute Mind Dump.
+   Write every thought, to-do, and worry on paper. No filter. Just empty your mind.
+
+4. Name the emotion honestly.
+   "I'm not just busy, I'm overwhelmed and scared I'll fail." Naming is taming.
+
+5. Reconnect with your values.
+   Ask: "Is what I'm doing aligned with what actually matters to me?"
+
+6. Focus on a single priority.
+   Pick one small task. Complete it slowly, mindfully. Feel the shift.
+
+⚡ Power-Up Move:
+Do 30 seconds of "Box Breathing":
+Inhale 4s → Hold 4s → Exhale 4s → Hold 4s. Repeat 4 times.
+This activates the parasympathetic nervous system, reducing impulsivity and improving clarity.`,
+
+        4: `🟡 Level 4: Stabilization & Neutral
+
+Typical Emotional State:
+Balanced, calm, indifferent, grounded, "okay."
+You're no longer reactive — but not yet inspired or energized either.
+A crucial pivot point in the emotional ladder.
+
+🌤️ Associated Emotions:
+Neutral, Stable, Content, Accepting, Mild interest, Calm, Open, Reflective, Centered
+
+⚠️ Common Pitfalls / Hidden Traps:
+- Staying too long in "neutral gear" — comfortable but stagnant.
+- Mistaking stability for progress — no real movement forward.
+- Emotional numbness — confusing peace with disconnection.
+- Avoiding ambition — rejecting desire to avoid risk.
+- Procrastination disguised as presence — "I'm just going with the flow" without direction.
+
+✅ Strategies to Move Up into Engagement & Positive Momentum:
+1. Reconnect with curiosity.
+   Ask: "What could be interesting right now?" or "What would feel satisfying to create or explore?"
+
+2. Do a 5-minute "momentum builder" task.
+   Small win that gives a sense of progress: clean a drawer, send one email, sketch one idea.
+
+3. Visualize best-case future.
+   Use the "3 Months From Now" prompt:
+   "If I felt proud and aligned 3 months from now… what would I be doing today?"
+
+4. Choose one low-stakes creative action.
+   Draw. Write freely. Reorganize your space. Make a playlist. Create without pressure.
+
+5. Ground your body.
+   Light stretching, walking barefoot, tai chi, breath-led yoga — builds presence and energy.
+
+⚡ Power-Up Move:
+Do the "Energy Check-In":
+- Body: How do I feel physically?
+- Mind: What's the loudest thought?
+- Emotion: What's the background emotion?
+- Soul: What do I quietly desire?
+
+This creates internal coherence and readiness for flow.`,
+
+        5: `🟡 Level 5: Willingness / Hope / Mild Positivity
+
+Typical Emotional State:
+You're open. Curious. Ready to engage.
+Not quite inspired, but no longer stuck — this is the beginning of upward momentum.
+
+🌟 Associated Emotions:
+Hopeful, Optimistic, Interested, Willing, Curious, Open-minded, Encouraged, Eager (mildly), Motivated (starting to emerge)
+
+⚠️ Common Pitfalls / Hidden Traps:
+- Overestimating readiness — taking on too much too fast can overwhelm this delicate stage.
+- Lack of clear direction — momentum without aim leads to scattered effort.
+- Relying too much on external validation — still not fully rooted in intrinsic drive.
+- Avoiding deeper internal work — trying to "stay positive" without resolving lingering issues.
+
+✅ Strategies to Move Up into True Positivity & Flow:
+1. Set small, clear intentions.
+   Not massive goals — just a next step with meaning (e.g. "Reach out to one person I admire").
+
+2. Track micro-wins.
+   Each small success builds confidence and reinforces upward movement. Try journaling "3 wins a day."
+
+3. Practice emotional momentum.
+   Notice and extend moments when you feel uplifted (amplify instead of dismissing them).
+
+4. Connect with purpose, not pressure.
+   Ask: "Why does this matter to me personally?" Focus on contribution and meaning.
+
+5. Use movement to shift energy.
+   Dance, walk with intention, tidy your space with music — use your body to support forward emotion.
+
+6. Surround yourself with inspiration.
+   Podcasts, people, quotes — everything around you should reinforce upward direction.
+
+⚡ Power-Up Move:
+Do a "Courage Ritual" —
+Commit to one thing today that's slightly uncomfortable but aligned with growth (send a pitch, ask a question, apply to something).
+This builds emotional muscle and trust in yourself.
+
+🧭 Reframe for Growth:
+Willingness is the bridge between neutrality and creativity.
+It's where real personal transformation begins — not in massive breakthroughs, but in small consistent actions.
+This is where the Flow state starts to become possible — as your energy and trust return.`,
+
+        6: `🟡 Level 6: Contentment / Calm Joy / Satisfaction
+
+🌿 Typical Emotional State:
+You feel good — not ecstatic, but grounded and genuinely okay.
+There's a sense of peace, lightness, and presence. You're not rushing, not grasping — and that's powerful.
+
+🌟 Associated Emotions:
+Calm, Relaxed, Satisfied, Grateful, Light-hearted, Present, Balanced, Comfortable, Steady, Appreciative
+
+✅ Strategies to Move Up into Enthusiasm, Passion & Flow:
+1. Tune into gratitude.
+   Identify 3 small things that bring you peace right now (e.g., sunlight, coffee aroma, a finished task).
+
+2. Create from stillness.
+   This is a great place to write, plan, or make art — without pressure.
+
+3. Simplify.
+   Let go of tasks or ideas that clutter your mind. Focus on what matters most today.
+
+4. Go deeper with presence.
+   Practice mindfulness. Slow meals, mindful walks, gentle meditation. These amplify contentment.
+
+5. Share light energy.
+   A simple compliment, a smile, or helping hand deepens your own experience of well-being.
+
+6. Do small acts of alignment.
+   Tidy a corner, stretch your back, drink water. Harmony in small actions reinforces this stable energy.
+
+⚠️ Common Pitfalls / Hidden Traps:
+- Complacency: Staying in contentment too long can cause stagnation or missed growth opportunities.
+- Fear of shaking peace: Avoiding challenges because they may disturb your balance (which can block progress).
+- Underestimating your potential: Settling for "okay" when you're ready for "amazing."
+
+🔥 Power-Up Move:
+Ask: "What would my calmest, wisest self gently stretch into right now?"
+Then do that. Keep it light, but directed.
+
+🧭 Reframe for Growth:
+Contentment is a powerful launchpad.
+From here, you can build sustainable momentum toward creative energy, passion, and purpose — without burning out.
+Enjoy it — but don't settle if your soul is calling for more.`,
+
+        7: `🟡 Level 7: Optimism / Curiosity / Interest
+
+🌟 Typical Emotional State:
+This level is your turning point. You begin to look toward the future with hope.
+Your mind starts generating ideas, asking questions, wanting to move toward something.
+
+💬 Associated Emotions:
+Curious, Interested, Hopeful, Optimistic, Open-minded, Playful, Engaged, Alert, Energetic, Lightly Motivated
+
+✅ Strategies to Move Up into Enthusiasm & Inspired Action:
+1. Follow the spark.
+   Ask: "What feels interesting right now?" Then give it 15–30 minutes of focused attention.
+
+2. Set a micro-goal.
+   Not a big outcome. Just the next meaningful step — clarity fuels momentum.
+
+3. Brainstorm freely.
+   Capture ideas without judging. Let imagination run before refining.
+
+4. Change environments.
+   Move to a café, library, park, or new workspace. New surroundings = fresh curiosity.
+
+5. Ask better questions.
+   Shift from "Why can't I?" to "What's possible from here?"
+
+6. Connect with other curious minds.
+   Share an idea with someone who energizes you — community multiplies interest.
+
+⚠️ Common Pitfalls / Hidden Traps:
+- Scattered attention: Curiosity can fragment into distractions. Stay focused on aligned exploration.
+- Chronic ideation: Constant thinking without action = idea fatigue.
+- Overplanning: Trying to mentally map everything before beginning can kill the spark.
+- False starts: Jumping from one thing to the next without finishing anything leads to overwhelm.
+
+🔥 Power-Up Move:
+Start a "Momentum Journal."
+Each day, note:
+- What sparked curiosity?
+- What 1 thing did you try or explore?
+- What's worth continuing?
+
+🧭 Reframe for Growth:
+This level is about opening doors.
+You don't need to know everything — you just need to trust that exploring will reveal the path.
+Curiosity is a bridge to higher energy and flow.`,
+
+        8: `🟡 Level 8: Enthusiasm / Motivation / Purpose
+
+🌟 Typical Emotional State:
+Now you're fully engaged. You've moved from thinking to doing — and you feel aligned with your actions.
+There's a sense of inner drive, direction, and upliftment.
+
+💬 Associated Emotions:
+Enthusiastic, Motivated, Purposeful, Eager, Excited, Empowered, Inspired, Focused, Confident, Joyfully Determined
+
+✅ Strategies to Move Up Toward Passion / Joy:
+1. Channel energy into aligned action.
+   Use this energy to build momentum on what truly matters. Prioritize meaningful projects.
+
+2. Reconnect with purpose.
+   Ask: Why is this important to me? Who am I doing this for?
+
+3. Create momentum rituals.
+   Start the day with a short win or micro habit to reinforce motivation.
+
+4. Celebrate progress.
+   Acknowledge small achievements — it locks in positive reinforcement and keeps energy flowing.
+
+5. Work in deep-focus blocks.
+   90 minutes of uninterrupted, immersive work helps you drop into flow faster.
+
+⚠️ Common Pitfalls / Hidden Traps:
+- Overexcitement → burnout: Riding high can tempt you to overcommit. Remember: energy is renewable, not infinite.
+- Losing touch with rest: Enthusiasm can mask exhaustion. Schedule recovery just like action.
+- Tunnel vision: Too much focus can block helpful feedback or new opportunities. Stay open while staying driven.
+- Chasing passion for its own sake: If you pursue "hype" rather than alignment, you risk crashing when things get hard.
+
+🔥 Power-Up Move:
+The "Why 5x" Drill
+Take a task and ask "Why is this important to me?"
+Then repeat your answer 5 times, each time going deeper.
+You'll uncover intrinsic motivation — the fuel that lasts.
+
+🧭 Reframe for Growth:
+This level is where meaning meets energy.
+It's not just about doing more — it's about doing what moves you and feeling that fire as fuel.
+If you learn to harness it wisely, enthusiasm becomes a gateway to Flow and Peak States.`,
+
+        9: `🟡 Level 9: Passion / Flow / Excitement
+
+🌟 Typical Emotional State:
+This is where you're in the zone. Time dilates. Energy feels limitless.
+You're deeply aligned — emotionally, mentally, even physically — and it shows in your performance, joy, and clarity.
+
+💬 Associated Emotions:
+Passionate, Flowing, Electrified, Empowered, Absorbed, Alive, Vibrant, Ecstatic, Creative, Limitless
+
+✅ Strategies to Sustain or Deepen the State:
+1. Minimize distractions.
+   Protect your flow space. Turn off notifications. Set boundaries.
+
+2. Ride the wave, but don't over-surf.
+   Work in cycles. Use Pomodoro-style sprints and scheduled breaks to avoid burnout.
+
+3. Balance emotion with structure.
+   Flow thrives on freedom within form. Define goals, then surrender to the process.
+
+4. Reflect and integrate.
+   After a peak session, pause. What worked? What triggered flow? Capture it.
+
+5. Keep the nervous system stable.
+   High excitement can crash into fatigue. Nourish your body: hydrate, breathe, stretch.
+
+⚠️ Common Pitfalls / Hidden Traps:
+- Flow addiction: Chasing only peak states can lead to avoidance of necessary low-energy tasks.
+- Overconfidence: Excitement can cause poor decisions — risky investments, impulsive promises, or skipping due diligence.
+- Ignoring your needs: Flow can make you forget hunger, fatigue, or emotional undercurrents. Check in with your body.
+- Romanticizing chaos: Passion without grounding can feel powerful, but becomes unstable over time.
+
+🧨 Risk Snapshot:
+- You might trust too easily → scams / manipulation
+- You might scale too fast without foundation
+- You might neglect relationships or self-care chasing creative highs
+
+🛠️ Grounding Practices:
+- Do a 5-minute body scan
+- Journal after each high-flow moment to reflect, not just rush forward
+- Walk in nature to discharge excessive energy
+- Anchor your excitement in values and long-term vision
+
+🧭 Reframe for Growth:
+Flow is not a goal — it's a side effect of clarity, alignment, and surrender.
+Use it as a signal that you're on the right path, not as a drug to escape low states.
+You're not chasing the feeling — you're becoming the person who lives in that frequency more often.`
+      };
+
+      document.getElementById('actionText').textContent = actionPlans[level] || "Your custom action steps go here.";
+    }
+
+    function goToGuidance() {
+      document.querySelector('#actionScreen').style.display = 'none';
+      document.querySelector('#guidanceScreen').style.display = 'flex';
+    }
+
+    function endGame() {
+      document.querySelector('#actionScreen').style.display = 'none';
+      document.querySelector('#introScreen').style.display = 'flex';
+    }
+
+    function goBack() {
+      document.querySelector('#guidanceScreen').style.display = 'none';
+      document.querySelector('#levelSelection').style.display = 'flex';
+    }
+  </script>
 </body>
 </html>
