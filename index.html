@@ -4,6 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Flow Game – Intro</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Flow Game">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
   <style>
     * {
       margin: 0;
@@ -192,7 +205,7 @@
     .action-text {
       color: #34495e;
       font-size: 1.0em;
-      line-height: 1.5;
+      line-height: 1.6; /* Increased line-height for better readability */
       text-align: left;
       background: rgba(255, 255, 255, 0.1);
       padding: 20px;
@@ -200,7 +213,42 @@
       margin: 20px 0;
       max-height: 60vh;
       overflow-y: auto;
-      white-space: pre-line;
+      /* white-space: pre-line; Removed as we'll use proper HTML for formatting */
+    }
+
+    .action-text h3 {
+        color: #2c3e50;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        font-size: 1.2em;
+    }
+
+    .action-text strong {
+        color: #2c3e50;
+    }
+
+    .action-text ul {
+        list-style: none; /* Remove default bullet */
+        padding-left: 0;
+        margin-bottom: 15px;
+    }
+
+    .action-text ul li {
+        margin-bottom: 8px;
+        padding-left: 20px;
+        position: relative;
+    }
+
+    .action-text ul li::before {
+        content: '•'; /* Custom bullet point */
+        color: #667eea;
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+    }
+
+    .action-text p {
+        margin-bottom: 15px;
     }
 
     .progress-indicator {
@@ -312,7 +360,6 @@
     </div>
   </div>
 
-  <!-- Level Selection Screen -->
   <div id="levelSelection" class="overlay" style="display: none;">
     <div class="game-container">
       <h2 style="color: #2c3e50; margin-bottom: 20px;">How are you feeling right now?</h2>
@@ -400,7 +447,6 @@
     </div>
   </div>
 
-  <!-- Guidance Screen -->
   <div id="guidanceScreen" class="overlay" style="display: none;">
     <div class="game-container">
       <h2 style="color: #2c3e50; margin-bottom: 20px;">Guidance & Techniques</h2>
@@ -414,7 +460,6 @@
     </div>
   </div>
 
-  <!-- Action Screen -->
   <div id="actionScreen" class="overlay" style="display: none;">
     <div class="game-container">
       <h2 style="color: #2c3e50; margin-bottom: 20px;">Your Action Plan</h2>
@@ -497,15 +542,15 @@
       });
     }
 
-    // Функция для форматирования текста
-    function formatActionText(text) {
-      if (!text) return '';
+    // Moved formatActionText function down to prevent reference error.
+    // function formatActionText(text) {
+    //   if (!text) return '';
       
-      return text
-        .replace(/(\d+\.\s)/g, '<strong>$1</strong>')
-        .replace(/(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g, '<strong>$1</strong>')
-        .replace(/^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm, '<div class="level-highlight"><strong>$1$2</strong></div>');
-    }
+    //   return text
+    //     .replace(/(\d+\.\s)/g, '<strong>$1</strong>')
+    //     .replace(/(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g, '<strong>$1</strong>')
+    //     .replace(/^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm, '<div class="level-highlight"><strong>$1$2</strong></div>');
+    // }
 
     // Плавные переходы между экранами
     function transitionToScreen(fromId, toId, callback) {
@@ -672,18 +717,18 @@
     // Оптимизация производительности
     document.addEventListener('DOMContentLoaded', function() {
       // Ленивая загрузка изображений
-      const images = ['background.png', 'container-background.png', 'logo.png', 'startbutton.png'];
+      const images = ['background.png', 'container-background.png', 'logo.png', 'startbutton.png', 'apple-touch-icon.png', 'favicon-32x32.png', 'favicon-16x16.png', 'safari-pinned-tab.svg'];
       images.forEach(src => {
         const img = new Image();
         img.src = src;
       });
       
-      // Предварительная компиляция регулярных выражений для форматирования
-      window.formatRegexes = {
-        numbers: /(\d+\.\s)/g,
-        headers: /(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g,
-        levels: /^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm
-      };
+      // Предварительная компиляция регулярных выражений для форматирования - no longer needed as much with HTML formatting
+      // window.formatRegexes = {
+      //   numbers: /(\d+\.\s)/g,
+      //   headers: /(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g,
+      //   levels: /^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm
+      // };
     });
 
     // Данные для уровней
@@ -700,778 +745,521 @@
     };
 
     const actionPlans = {
-      1: `🔴 Level 1: Rock Bottom – Despair / Apathy / Collapse
-💬 Typical Emotional State:
-You feel utterly depleted — like nothing matters. There may be a sense of void, emotional numbness, or internal collapse.
-This is the lowest emotional frequency, often marked by deep despair, isolation, or complete lack of motivation.
-
-🧠 Associated Emotions:
-Apathy
-
-Deep Grief
-
-Numbness
-
-Total Fatigue
-
-Hopelessness
-
-Collapse
-
-Suicidal Thoughts (in extreme cases)
-
-Emotional Freeze
-
-Emptiness
-
-⚠️ Common Pitfalls / Hidden Traps:
-Complete disconnection from reality or the body
-
-Belief that nothing can help or change
-
-Isolation becomes seductive — "No one gets it, so why try"
-
-Self-abandonment or emotional shutdown
-
-Suicidal ideation or existential dread if left unchecked
-
-Note: This level can be clinical. If someone is stuck here for days or weeks, professional support may be required.
-
-🪜 Strategies to Begin Moving Up:
-The goal here is not motivation, but activation — to wake up the system gently.
-
-Gentle physical stimulation
-
-Take a cold or warm shower. Move fingers or stretch slowly. Even 1 push-up counts.
-
-Basic sensory grounding
-
-Light a scented candle, listen to calming music, touch something soft. Come back into the body.
-
-Micro-commitment
-
-Promise to do one tiny thing today: drink a glass of water, open a window, brush your teeth.
-
-Compassionate voice
-
-Say: “It’s okay to feel this. I’m still here.”
-Use a journal or voice note — even 10 seconds helps.
-
-Connect — even passively
-
-Listen to a podcast, message someone “I’m here,” or ask for a hug. Even if it feels fake — do it.
-
-🧨 Risk Snapshot:
-Getting stuck in an emotional freeze
-
-Letting shame block any attempts at change (“I should be stronger”)
-
-Using substances or distractions to escape (binge-watching, alcohol, doom-scrolling)
-
-🛠️ Supportive Practices:
-Nap + hydrate (this helps regulate cortisol + adrenaline)
-
-Pet an animal or hug a pillow (oxytocin release)
-
-Crying (if it comes) — is a healthy nervous system release
-
-Speak to one safe person — even if only to say “I’m not okay”
-
-🧭 Reframe for Growth:
-This is not your forever state.
-You are not broken — you're overloaded, under-supported, or simply burned out.
-Your system shut down to protect itself. Now we gently reboot.`,
-
-      2: `🔴 Level 2: Heavy Experiences – Emotional Fatigue, Numbness, and Despair Under the Surface
-💬 Typical Emotional State:
-You're functional but disconnected. You might be going through the motions, but inside — you feel disappointed, emotionally flat, or hopeless. This is the “low-battery mode” of life: not rock bottom, but not alive either.
-
-🧠 Associated Emotions:
-Disappointed
-
-Emotionally Exhausted
-
-Empty
-
-Numb
-
-Hopeless
-
-Withdrawn
-
-Resigned
-
-Bored but unable to act
-
-Quiet sadness that doesn’t speak
-
-⚠️ Common Pitfalls / Traps:
-Going on autopilot, pretending everything’s fine
-
-Emotional suppression (“I shouldn’t feel this way”)
-
-Losing touch with desire — you forget what excites you
-
-Engaging in silent sabotage (procrastination, isolation, checking out)
-
-Comparison to others who seem “ahead” or “more alive”
-
-🪜 Strategies to Move Up:
-Name it to claim it
-
-Identify your exact feeling. Use the Emotion Wheel if needed.
-
-Say it out loud or write: “I feel ___ right now.”
-
-Nourishing movement
-
-Gentle yoga, a slow walk, 5 minutes of dancing. The goal is not “exercise,” but reconnecting with your body.
-
-Tiny pleasures
-
-Drink your favorite tea. Sit in the sun. Put on music that feels like home.
-→ These spark micro-emotions, essential for recovery.
-
-Talk to someone without solutions
-
-Just be heard. Say: “I don’t need advice, I just need to vent.”
-
-Rediscover small purpose
-
-Make something. Write. Cook. Organize a drawer. Anything that reaffirms agency.
-
-🧨 Risks at This Level:
-Acting numb when you're actually overwhelmed
-
-Pushing through without addressing inner depletion
-
-Suppressing so long that emotions build up into anxiety or anger
-
-Mistaking apathy for laziness (“Why can’t I just be productive?”)
-
-🧠 Conscious Decision-Making:
-Don’t make big decisions from this level — they’re often rooted in avoidance or escape.
-
-Instead, ask:
-
-What do I need to feel 10% better?
-
-What is one boundary I need to re-establish?
-
-🧭 Reframe for Growth:
-This level often appears right before breakthroughs.
-The heaviness is a message: your system is saying “I can’t live like this anymore.”
-
-That’s not a weakness. That’s inner intelligence.`,
-
-      3: `🟠 Level 3: Negative Activation
-Typical Emotional State:
-Tense, restless, irritated, impulsive, scattered, hyper-activated but not focused.
-You feel like you’re doing something — but not necessarily the right things.
-
-Associated Emotions (from emotion wheels):
-
-Frustration
-
-Anxiety
-
-Stress
-
-Impatience
-
-Overwhelm
-
-Confusion
-
-Agitation
-
-Urgency
-
-Hyper-productivity (driven by fear, not clarity)
-
-🔍 Key Traits of This Level:
-You’re active — but it’s often reactive, not conscious or strategic.
-
-Often triggered by a fear of falling behind, missing out, or being judged.
-
-You might appear productive on the outside, but inside there’s chaotic urgency.
-
-⚠️ Common Pitfalls / Traps:
-Overreacting — sending messages, quitting, or deciding things impulsively.
-
-Overcommitting — saying yes to everything because of pressure or fear of missing out.
-
-Avoiding root causes — staying “busy” to avoid uncomfortable introspection.
-
-Misinterpreting stress as motivation — mistaking tension for momentum.
-
-Making rushed decisions — buying things, launching too soon, miscommunicating.
-
-⚡ Example: You feel anxious about your future, so you sign up for five courses… but don’t finish any of them.
-
-✅ Strategies to Move Up to Constructive Energy / Clarity:
-Pause before reacting.
-
-Ask: “Am I responding to reality, or to fear?”
-
-Rechannel the energy.
-
-Go for a short run, do breathwork, shake out the tension, or dance — burn the static charge.
-
-Practice the 3-Minute Mind Dump.
-
-Write every thought, to-do, and worry on paper. No filter. Just empty your mind.
-
-Name the emotion honestly.
-
-"I'm not just busy, I’m overwhelmed and scared I’ll fail." Naming is taming.
-
-Reconnect with your values.
-
-Ask: "Is what I’m doing aligned with what actually matters to me?"
-
-Focus on a single priority.
-
-Pick one small task. Complete it slowly, mindfully. Feel the shift.
-
-⚡ Power-Up Move:
-Do 30 seconds of “Box Breathing”:
-Inhale 4s → Hold 4s → Exhale 4s → Hold 4s. Repeat 4 times.
-This activates the parasympathetic nervous system, reducing impulsivity and improving clarity.
-
-🚨 What to Watch Out For (Even When Improving):
-False clarity: After releasing tension, don't rush to make decisions immediately — give yourself a “cooldown.”
-
-Overconfidence: As energy rises, be cautious of manic optimism (e.g., sudden risky investments).
-
-External validation loop: Don’t let momentum be hijacked by social media likes or praise — stay internally focused.
-
-🧭 Reframing This Stage:
-This is not a bad stage — it’s just unrefined power.
-Think of it like steam building up in a pressure cooker. You can either explode or redirect the energy into useful motion.`,
-
-        4: `🟡 Level 4: Stabilization & Neutral
-Typical Emotional State:
-Balanced, calm, indifferent, grounded, “okay.”
-You’re no longer reactive — but not yet inspired or energized either.
-A crucial pivot point in the emotional ladder.
-
-🌤️ Associated Emotions:
-Neutral
-
-Stable
-
-Content
-
-Accepting
-
-Mild interest
-
-Calm
-
-Open
-
-Reflective
-
-Centered
-
-Disconnected (but not negatively)
-
-⚠️ Common Pitfalls / Hidden Traps:
-Staying too long in “neutral gear” — comfortable but stagnant.
-
-Mistaking stability for progress — no real movement forward.
-
-Emotional numbness — confusing peace with disconnection.
-
-Avoiding ambition — rejecting desire to avoid risk.
-
-Procrastination disguised as presence — “I’m just going with the flow” without direction.
-
-🧠 Example: You feel better than before, but can't seem to push forward. You keep organizing, preparing, thinking — but not doing anything meaningful.
-
-✅ Strategies to Move Up into Engagement & Positive Momentum:
-Reconnect with curiosity.
-
-Ask: “What could be interesting right now?” or “What would feel satisfying to create or explore?”
-
-Do a 5-minute “momentum builder” task.
-
-Small win that gives a sense of progress: clean a drawer, send one email, sketch one idea.
-
-Visualize best-case future.
-
-Use the “3 Months From Now” prompt:
-“If I felt proud and aligned 3 months from now… what would I be doing today?”
-
-Choose one low-stakes creative action.
-
-Draw. Write freely. Reorganize your space. Make a playlist. Create without pressure.
-
-Ground your body.
-
-Light stretching, walking barefoot, tai chi, breath-led yoga — builds presence and energy.
-
-Ask yourself:
-
-“What’s one area in life I’ve been putting off improving, but now feel ready to look at with honesty?”
-
-⚡ Power-Up Move:
-Do the “Energy Check-In”:
-
-Body: How do I feel physically?
-
-Mind: What’s the loudest thought?
-
-Emotion: What’s the background emotion?
-
-Soul: What do I quietly desire?
-
-This creates internal coherence and readiness for flow.
-
-🚨 What to Watch Out For (Even at This Good Stage):
-Safe zone syndrome: You’ve exited chaos, but resist challenge.
-
-“Everything’s fine” mode: Progress slows because urgency is gone.
-
-Over-reflection without action.
-
-Disconnection from deeper desire — you may settle for comfort, not vitality.
-
-🧭 Reframe for Growth:
-This level is a launchpad, not a resting place.
-Stability gives you the platform to build.
-From here, you can consciously direct energy into purpose, joy, and deeper flow — but you must choose to act.`,
-
-        5: `🟡 Level 5: Willingness / Hope / Mild Positivity
-Typical Emotional State:
-You’re open. Curious. Ready to engage.
-Not quite inspired, but no longer stuck — this is the beginning of upward momentum.
-
-🌟 Associated Emotions:
-Hopeful
-
-Optimistic
-
-Interested
-
-Willing
-
-Curious
-
-Open-minded
-
-Encouraged
-
-Eager (mildly)
-
-Motivated (starting to emerge)
-
-⚠️ Common Pitfalls / Hidden Traps:
-Overestimating readiness — taking on too much too fast can overwhelm this delicate stage.
-
-Lack of clear direction — momentum without aim leads to scattered effort.
-
-Relying too much on external validation — still not fully rooted in intrinsic drive.
-
-Avoiding deeper internal work — trying to "stay positive" without resolving lingering issues.
-
-🧠 Example: You start a project with enthusiasm but abandon it after two days. Energy is rising — but lacks structure or grounding.
-
-✅ Strategies to Move Up into True Positivity & Flow:
-Set small, clear intentions.
-
-Not massive goals — just a next step with meaning (e.g. “Reach out to one person I admire”).
-
-Track micro-wins.
-
-Each small success builds confidence and reinforces upward movement. Try journaling “3 wins a day.”
-
-Practice emotional momentum.
-
-Notice and extend moments when you feel uplifted (amplify instead of dismissing them).
-
-Connect with purpose, not pressure.
-
-Ask: “Why does this matter to me personally?” Focus on contribution and meaning.
-
-Use movement to shift energy.
-
-Dance, walk with intention, tidy your space with music — use your body to support forward emotion.
-
-Surround yourself with inspiration.
-
-Podcasts, people, quotes — everything around you should reinforce upward direction.
-
-⚡ Power-Up Move:
-Do a “Courage Ritual” —
-Commit to one thing today that’s slightly uncomfortable but aligned with growth (send a pitch, ask a question, apply to something).
-This builds emotional muscle and trust in yourself.
-
-🚨 What to Watch Out For:
-“Toxic optimism” — skipping over real fears or doubts in favor of forced positivity.
-
-Shiny-object syndrome — jumping from one idea to another without finishing.
-
-Premature self-comparison — seeing others further ahead and spiraling downward again.
-
-Fear of momentum — low-key sabotage due to fear of success.
-
-🧭 Reframe for Growth:
-Willingness is the bridge between neutrality and creativity.
-It’s where real personal transformation begins — not in massive breakthroughs, but in small consistent actions.
-This is where the Flow state starts to become possible — as your energy and trust return.`,
-
-        6: `🟡 Level 6: Contentment / Calm Joy / Satisfaction
-🌿 Typical Emotional State:
-You feel good — not ecstatic, but grounded and genuinely okay.
-There’s a sense of peace, lightness, and presence. You’re not rushing, not grasping — and that's powerful.
-
-🌟 Associated Emotions (from Wheel references):
-Calm
-
-Relaxed
-
-Satisfied
-
-Grateful
-
-Light-hearted
-
-Present
-
-Balanced
-
-Comfortable
-
-Steady
-
-Appreciative
-
-✅ Strategies to Move Up into Enthusiasm, Passion & Flow:
-Tune into gratitude.
-
-Identify 3 small things that bring you peace right now (e.g., sunlight, coffee aroma, a finished task).
-
-Create from stillness.
-
-This is a great place to write, plan, or make art — without pressure.
-
-Simplify.
-
-Let go of tasks or ideas that clutter your mind. Focus on what matters most today.
-
-Go deeper with presence.
-
-Practice mindfulness. Slow meals, mindful walks, gentle meditation. These amplify contentment.
-
-Share light energy.
-
-A simple compliment, a smile, or helping hand deepens your own experience of well-being.
-
-Do small acts of alignment.
-
-Tidy a corner, stretch your back, drink water. Harmony in small actions reinforces this stable energy.
-
-⚠️ Common Pitfalls / Hidden Traps:
-Complacency.
-
-Staying in contentment too long can cause stagnation or missed growth opportunities.
-
-Fear of shaking peace.
-
-Avoiding challenges because they may disturb your balance (which can block progress).
-
-Underestimating your potential.
-
-Settling for “okay” when you’re ready for “amazing.”
-
-🧠 Example: You feel good and don't want to ruin it — so you put off sending that important application. But staying here too long can mean missing the window of momentum.
-
-🔥 Power-Up Move:
-Ask: “What would my calmest, wisest self gently stretch into right now?”
-Then do that. Keep it light, but directed.
-
-🚨 What to Watch Out For:
-Pleasure over purpose.
-
-Staying in comfort zones at the expense of growth.
-
-Drift mode.
-
-Floating through days without checking alignment.
-
-Fading emotional edge.
-
-Losing passion if contentment turns into disengagement.
-
-🧭 Reframe for Growth:
-Contentment is a powerful launchpad.
-From here, you can build sustainable momentum toward creative energy, passion, and purpose — without burning out.
-Enjoy it — but don’t settle if your soul is calling for more.`,
-
-        7: `🟡 Level 7: Optimism / Curiosity / Interest
-🌟 Typical Emotional State:
-This level is your turning point. You begin to look toward the future with hope.
-Your mind starts generating ideas, asking questions, wanting to move toward something.
-
-💬 Associated Emotions (from Wheel & Ladder references):
-Curious
-
-Interested
-
-Hopeful
-
-Optimistic
-
-Open-minded
-
-Playful
-
-Engaged
-
-Alert
-
-Energetic
-
-Lightly Motivated
-
-✅ Strategies to Move Up into Enthusiasm & Inspired Action:
-Follow the spark.
-
-Ask: “What feels interesting right now?” Then give it 15–30 minutes of focused attention.
-
-Set a micro-goal.
-
-Not a big outcome. Just the next meaningful step — clarity fuels momentum.
-
-Brainstorm freely.
-
-Capture ideas without judging. Let imagination run before refining.
-
-Change environments.
-
-Move to a café, library, park, or new workspace. New surroundings = fresh curiosity.
-
-Ask better questions.
-
-Shift from “Why can’t I?” to “What’s possible from here?”
-
-Connect with other curious minds.
-
-Share an idea with someone who energizes you — community multiplies interest.
-
-⚠️ Common Pitfalls / Hidden Traps:
-Scattered attention.
-
-Curiosity can fragment into distractions. Stay focused on aligned exploration.
-
-Chronic ideation.
-
-Constant thinking without action = idea fatigue.
-
-Strategy: Balance 1 idea with 1 concrete step.
-
-Overplanning.
-
-Trying to mentally map everything before beginning can kill the spark.
-
-False starts.
-
-Jumping from one thing to the next without finishing anything leads to overwhelm.
-
-🔥 Power-Up Move:
-Start a “Momentum Journal.”
-Each day, note:
-
-What sparked curiosity?
-
-What 1 thing did you try or explore?
-
-What’s worth continuing?
-
-🚨 What to Watch For:
-Seeking novelty for escape.
-
-Curiosity used to avoid discomfort, not to grow.
-
-Fear of failing early.
-
-At this stage, experimentation > perfection — don’t hold back.
-
-🧭 Reframe for Growth:
-This level is about opening doors.
-You don’t need to know everything — you just need to trust that exploring will reveal the path.
-
-Curiosity is a bridge to higher energy and flow.
-Use it well — and you’ll soon be in states of joy, creativity, and even personal breakthroughs.`,
-
-        8: `🟡 Level 8: Enthusiasm / Motivation / Purpose
-🌟 Typical Emotional State:
-Now you’re fully engaged. You’ve moved from thinking to doing — and you feel aligned with your actions.
-There’s a sense of inner drive, direction, and upliftment.
-
-💬 Associated Emotions:
-Enthusiastic
-
-Motivated
-
-Purposeful
-
-Eager
-
-Excited
-
-Empowered
-
-Inspired
-
-Focused
-
-Confident
-
-Joyfully Determined
-
-✅ Strategies to Move Up Toward Passion / Joy:
-Channel energy into aligned action.
-
-Use this energy to build momentum on what truly matters. Prioritize meaningful projects.
-
-Reconnect with purpose.
-
-Ask: Why is this important to me? Who am I doing this for?
-
-Create momentum rituals.
-
-Start the day with a short win or micro habit to reinforce motivation.
-
-Celebrate progress.
-
-Acknowledge small achievements — it locks in positive reinforcement and keeps energy flowing.
-
-Work in deep-focus blocks.
-
-90 minutes of uninterrupted, immersive work helps you drop into flow faster.
-
-⚠️ Common Pitfalls / Hidden Traps:
-Overexcitement → burnout.
-
-Riding high can tempt you to overcommit. Remember: energy is renewable, not infinite.
-
-Losing touch with rest.
-
-Enthusiasm can mask exhaustion. Schedule recovery just like action.
-
-Tunnel vision.
-
-Too much focus can block helpful feedback or new opportunities. Stay open while staying driven.
-
-Chasing passion for its own sake.
-
-If you pursue “hype” rather than alignment, you risk crashing when things get hard.
-
-🔥 Power-Up Move:
-The “Why 5x” Drill
-Take a task and ask “Why is this important to me?”
-Then repeat your answer 5 times, each time going deeper.
-You’ll uncover intrinsic motivation — the fuel that lasts.
-
-🚨 What to Watch For:
-Acting impulsively just because energy is high
-
-Making big decisions (e.g., quitting job, starting business, ending relationship) without grounding
-
-Ignoring emotional signs of fatigue because “I’m on a roll”
-
-🧭 Reframe for Growth:
-This level is where meaning meets energy.
-It’s not just about doing more — it’s about doing what moves you and feeling that fire as fuel.
-If you learn to harness it wisely, enthusiasm becomes a gateway to Flow and Peak States.`,
-
-        9: `🟡 Level 9: Passion / Flow / Excitement
-🌟 Typical Emotional State:
-This is where you're in the zone. Time dilates. Energy feels limitless.
-You’re deeply aligned — emotionally, mentally, even physically — and it shows in your performance, joy, and clarity.
-
-💬 Associated Emotions:
-Passionate
-
-Flowing
-
-Electrified
-
-Empowered
-
-Absorbed
-
-Alive
-
-Vibrant
-
-Ecstatic
-
-Creative
-
-Limitless
-
-✅ Strategies to Sustain or Deepen the State:
-Minimize distractions.
-
-Protect your flow space. Turn off notifications. Set boundaries.
-
-Ride the wave, but don’t over-surf.
-
-Work in cycles. Use Pomodoro-style sprints and scheduled breaks to avoid burnout.
-
-Balance emotion with structure.
-
-Flow thrives on freedom within form. Define goals, then surrender to the process.
-
-Reflect and integrate.
-
-After a peak session, pause. What worked? What triggered flow? Capture it.
-
-Keep the nervous system stable.
-
-High excitement can crash into fatigue. Nourish your body: hydrate, breathe, stretch.
-
-⚠️ Common Pitfalls / Hidden Traps:
-Flow addiction.
-
-Chasing only peak states can lead to avoidance of necessary low-energy tasks.
-
-Overconfidence.
-
-Excitement can cause poor decisions — risky investments, impulsive promises, or skipping due diligence.
-
-Ignoring your needs.
-
-Flow can make you forget hunger, fatigue, or emotional undercurrents. Check in with your body.
-
-Romanticizing chaos.
-
-Passion without grounding can feel powerful, but becomes unstable over time.
-
-🧨 Risk Snapshot:
-You might trust too easily → scams / manipulation
-
-You might scale too fast without foundation
-
-You might neglect relationships or self-care chasing creative highs
-
-🛠️ Grounding Practices:
-Do a 5-minute body scan
-
-Journal after each high-flow moment to reflect, not just rush forward
-
-Walk in nature to discharge excessive energy
-
-Anchor your excitement in values and long-term vision
-
-🧭 Reframe for Growth:
-Flow is not a goal — it’s a side effect of clarity, alignment, and surrender.
-Use it as a signal that you're on the right path, not as a drug to escape low states.
-You’re not chasing the feeling — you’re becoming the person who lives in that frequency more often.`
+      1: `
+        <div class="level-highlight"><strong>🔴 Level 1: Rock Bottom – Despair / Apathy / Collapse</strong></div>
+        <p><strong>💬 Typical Emotional State:</strong></p>
+        <p>You feel utterly depleted — like nothing matters. There may be a sense of void, emotional numbness, or internal collapse. This is the lowest emotional frequency, often marked by deep despair, isolation, or complete lack of motivation.</p>
+
+        <p><strong>🧠 Associated Emotions:</strong></p>
+        <ul>
+            <li>Apathy</li>
+            <li>Deep Grief</li>
+            <li>Numbness</li>
+            <li>Total Fatigue</li>
+            <li>Hopelessness</li>
+            <li>Collapse</li>
+            <li>Suicidal Thoughts (in extreme cases)</li>
+            <li>Emotional Freeze</li>
+            <li>Emptiness</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Hidden Traps:</strong></p>
+        <ul>
+            <li>Complete disconnection from reality or the body</li>
+            <li>Belief that nothing can help or change</li>
+            <li>Isolation becomes seductive — "No one gets it, so why try"</li>
+            <li>Self-abandonment or emotional shutdown</li>
+            <li>Suicidal ideation or existential dread if left unchecked</li>
+        </ul>
+        <p><strong>Note:</strong> This level can be clinical. If someone is stuck here for days or weeks, professional support may be required.</p>
+
+        <p><strong>🪜 Strategies to Begin Moving Up:</strong></p>
+        <p>The goal here is not motivation, but activation — to wake up the system gently.</p>
+        <ul>
+            <li><strong>Gentle physical stimulation:</strong> Take a cold or warm shower. Move fingers or stretch slowly. Even 1 push-up counts.</li>
+            <li><strong>Basic sensory grounding:</strong> Light a scented candle, listen to calming music, touch something soft. Come back into the body.</li>
+            <li><strong>Micro-commitment:</strong> Promise to do one tiny thing today: drink a glass of water, open a window, brush your teeth.</li>
+            <li><strong>Compassionate voice:</strong> Say: “It’s okay to feel this. I’m still here.” Use a journal or voice note — even 10 seconds helps.</li>
+            <li><strong>Connect — even passively:</strong> Listen to a podcast, message someone “I’m here,” or ask for a hug. Even if it feels fake — do it.</li>
+        </ul>
+
+        <p><strong>🧨 Risk Snapshot:</strong></p>
+        <ul>
+            <li>Getting stuck in an emotional freeze</li>
+            <li>Letting shame block any attempts at change (“I should be stronger”)</li>
+            <li>Using substances or distractions to escape (binge-watching, alcohol, doom-scrolling)</li>
+        </ul>
+
+        <p><strong>🛠️ Supportive Practices:</strong></p>
+        <ul>
+            <li>Nap + hydrate (this helps regulate cortisol + adrenaline)</li>
+            <li>Pet an animal or hug a pillow (oxytocin release)</li>
+            <li>Crying (if it comes) — is a healthy nervous system release</li>
+            <li>Speak to one safe person — even if only to say “I’m not okay”</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>This is not your forever state. You are not broken — you're overloaded, under-supported, or simply burned out. Your system shut down to protect itself. Now we gently reboot.</p>
+      `,
+
+      2: `
+        <div class="level-highlight"><strong>🟠 Level 2: Heavy Experiences – Emotional Fatigue, Numbness, and Despair Under the Surface</strong></div>
+        <p><strong>💬 Typical Emotional State:</strong></p>
+        <p>You're functional but disconnected. You might be going through the motions, but inside — you feel disappointed, emotionally flat, or hopeless. This is the “low-battery mode” of life: not rock bottom, but not alive either.</p>
+
+        <p><strong>🧠 Associated Emotions:</strong></p>
+        <ul>
+            <li>Disappointed</li>
+            <li>Emotionally Exhausted</li>
+            <li>Empty</li>
+            <li>Numb</li>
+            <li>Hopeless</li>
+            <li>Withdrawn</li>
+            <li>Resigned</li>
+            <li>Bored but unable to act</li>
+            <li>Quiet sadness that doesn’t speak</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Traps:</strong></p>
+        <ul>
+            <li>Going on autopilot, pretending everything’s fine</li>
+            <li>Emotional suppression (“I shouldn’t feel this way”)</li>
+            <li>Losing touch with desire — you forget what excites you</li>
+            <li>Engaging in silent sabotage (procrastination, isolation, checking out)</li>
+            <li>Comparison to others who seem “ahead” or “more alive”</li>
+        </ul>
+
+        <p><strong>🪜 Strategies to Move Up:</strong></p>
+        <ul>
+            <li><strong>Name it to claim it:</strong> Identify your exact feeling. Use the Emotion Wheel if needed. Say it out loud or write: “I feel ___ right now.”</li>
+            <li><strong>Nourishing movement:</strong> Gentle yoga, a slow walk, 5 minutes of dancing. The goal is not “exercise,” but reconnecting with your body.</li>
+            <li><strong>Tiny pleasures:</strong> Drink your favorite tea. Sit in the sun. Put on music that feels like home. These spark micro-emotions, essential for recovery.</li>
+            <li><strong>Talk to someone without solutions:</strong> Just be heard. Say: “I don’t need advice, I just need to vent.”</li>
+            <li><strong>Rediscover small purpose:</strong> Make something. Write. Cook. Organize a drawer. Anything that reaffirms agency.</li>
+        </ul>
+
+        <p><strong>🧨 Risks at This Level:</strong></p>
+        <ul>
+            <li>Acting numb when you're actually overwhelmed</li>
+            <li>Pushing through without addressing inner depletion</li>
+            <li>Suppressing so long that emotions build up into anxiety or anger</li>
+            <li>Mistaking apathy for laziness (“Why can’t I just be productive?”)</li>
+        </ul>
+
+        <p><strong>🧠 Conscious Decision-Making:</strong></p>
+        <p>Don’t make big decisions from this level — they’re often rooted in avoidance or escape.</p>
+        <p>Instead, ask:</p>
+        <ul>
+            <li>What do I need to feel 10% better?</li>
+            <li>What is one boundary I need to re-establish?</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>This level often appears right before breakthroughs. The heaviness is a message: your system is saying “I can’t live like this anymore.” That’s not a weakness. That’s inner intelligence.</p>
+      `,
+
+      3: `
+        <div class="level-highlight"><strong>🔴 Level 3: Negative Activation</strong></div>
+        <p><strong>💬 Typical Emotional State:</strong></p>
+        <p>Tense, restless, irritated, impulsive, scattered, hyper-activated but not focused. You feel like you’re doing something — but not necessarily the right things.</p>
+
+        <p><strong>🧠 Associated Emotions (from emotion wheels):</strong></p>
+        <ul>
+            <li>Frustration</li>
+            <li>Anxiety</li>
+            <li>Stress</li>
+            <li>Impatience</li>
+            <li>Overwhelm</li>
+            <li>Confusion</li>
+            <li>Agitation</li>
+            <li>Urgency</li>
+            <li>Hyper-productivity (driven by fear, not clarity)</li>
+        </ul>
+
+        <p><strong>🔍 Key Traits of This Level:</strong></p>
+        <ul>
+            <li>You’re active — but it’s often reactive, not conscious or strategic.</li>
+            <li>Often triggered by a fear of falling behind, missing out, or being judged.</li>
+            <li>You might appear productive on the outside, but inside there’s chaotic urgency.</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Traps:</strong></p>
+        <ul>
+            <li>Overreacting — sending messages, quitting, or deciding things impulsively.</li>
+            <li>Overcommitting — saying yes to everything because of pressure or fear of missing out.</li>
+            <li>Avoiding root causes — staying “busy” to avoid uncomfortable introspection.</li>
+            <li>Misinterpreting stress as motivation — mistaking tension for momentum.</li>
+            <li>Making rushed decisions — buying things, launching too soon, miscommunicating.</li>
+        </ul>
+        <p><strong>⚡ Example:</strong> You feel anxious about your future, so you sign up for five courses… but don’t finish any of them.</p>
+
+        <p><strong>✅ Strategies to Move Up to Constructive Energy / Clarity:</strong></p>
+        <ul>
+            <li><strong>Pause before reacting:</strong> Ask: “Am I responding to reality, or to fear?”</li>
+            <li><strong>Rechannel the energy:</strong> Go for a short run, do breathwork, shake out the tension, or dance — burn the static charge.</li>
+            <li><strong>Practice the 3-Minute Mind Dump:</strong> Write every thought, to-do, and worry on paper. No filter. Just empty your mind.</li>
+            <li><strong>Name the emotion honestly:</strong> "I'm not just busy, I’m overwhelmed and scared I’ll fail." Naming is taming.</li>
+            <li><strong>Reconnect with your values:</strong> Ask: "Is what I’m doing aligned with what actually matters to me?"</li>
+            <li><strong>Focus on a single priority:</strong> Pick one small task. Complete it slowly, mindfully. Feel the shift.</li>
+        </ul>
+
+        <p><strong>⚡ Power-Up Move:</strong></p>
+        <p>Do 30 seconds of “Box Breathing”:</p>
+        <ul>
+            <li>Inhale 4s → Hold 4s → Exhale 4s → Hold 4s. Repeat 4 times.</li>
+        </ul>
+        <p>This activates the parasympathetic nervous system, reducing impulsivity and improving clarity.</p>
+
+        <p><strong>🚨 What to Watch Out For (Even When Improving):</strong></p>
+        <ul>
+            <li><strong>False clarity:</strong> After releasing tension, don't rush to make decisions immediately — give yourself a “cooldown.”</li>
+            <li><strong>Overconfidence:</strong> As energy rises, be cautious of manic optimism (e.g., sudden risky investments).</li>
+            <li><strong>External validation loop:</strong> Don’t let momentum be hijacked by social media likes or praise — stay internally focused.</li>
+        </ul>
+
+        <p><strong>🧭 Reframing This Stage:</strong></p>
+        <p>This is not a bad stage — it’s just unrefined power. Think of it like steam building up in a pressure cooker. You can either explode or redirect the energy into useful motion.</p>
+      `,
+
+      4: `
+        <div class="level-highlight"><strong>🟤 Level 4: Stabilization & Neutral</strong></div>
+        <p><strong>💬 Typical Emotional State:</strong></p>
+        <p>Balanced, calm, indifferent, grounded, “okay.” You’re no longer reactive — but not yet inspired or energized either. A crucial pivot point in the emotional ladder.</p>
+
+        <p><strong>🌤️ Associated Emotions:</strong></p>
+        <ul>
+            <li>Neutral</li>
+            <li>Stable</li>
+            <li>Content</li>
+            <li>Accepting</li>
+            <li>Mild interest</li>
+            <li>Calm</li>
+            <li>Open</li>
+            <li>Reflective</li>
+            <li>Centered</li>
+            <li>Disconnected (but not negatively)</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Hidden Traps:</strong></p>
+        <ul>
+            <li>Staying too long in “neutral gear” — comfortable but stagnant.</li>
+            <li>Mistaking stability for progress — no real movement forward.</li>
+            <li>Emotional numbness — confusing peace with disconnection.</li>
+            <li>Avoiding ambition — rejecting desire to avoid risk.</li>
+            <li>Procrastination disguised as presence — “I’m just going with the flow” without direction.</li>
+        </ul>
+        <p><strong>🧠 Example:</strong> You feel better than before, but can't seem to push forward. You keep organizing, preparing, thinking — but not doing anything meaningful.</p>
+
+        <p><strong>✅ Strategies to Move Up into Engagement & Positive Momentum:</strong></p>
+        <ul>
+            <li><strong>Reconnect with curiosity:</strong> Ask: “What could be interesting right now?” or “What would feel satisfying to create or explore?”</li>
+            <li><strong>Do a 5-minute “momentum builder” task:</strong> Small win that gives a sense of progress: clean a drawer, send one email, sketch one idea.</li>
+            <li><strong>Visualize best-case future:</strong> Use the “3 Months From Now” prompt: “If I felt proud and aligned 3 months from now… what would I be doing today?”</li>
+            <li><strong>Choose one low-stakes creative action:</strong> Draw. Write freely. Reorganize your space. Make a playlist. Create without pressure.</li>
+            <li><strong>Ground your body:</strong> Light stretching, walking barefoot, tai chi, breath-led yoga — builds presence and energy.</li>
+        </ul>
+        <p>Ask yourself:</p>
+        <ul>
+            <li>“What’s one area in life I’ve been putting off improving, but now feel ready to look at with honesty?”</li>
+        </ul>
+
+        <p><strong>⚡ Power-Up Move:</strong></p>
+        <p>Do the “Energy Check-In”:</p>
+        <ul>
+            <li><strong>Body:</strong> How do I feel physically?</li>
+            <li><strong>Mind:</strong> What’s the loudest thought?</li>
+            <li><strong>Emotion:</strong> What’s the background emotion?</li>
+            <li><strong>Soul:</strong> What do I quietly desire?</li>
+        </ul>
+        <p>This creates internal coherence and readiness for flow.</p>
+
+        <p><strong>🚨 What to Watch Out For (Even at This Good Stage):</strong></p>
+        <ul>
+            <li><strong>Safe zone syndrome:</strong> You’ve exited chaos, but resist challenge.</li>
+            <li><strong>“Everything’s fine” mode:</strong> Progress slows because urgency is gone.</li>
+            <li>Over-reflection without action.</li>
+            <li>Disconnection from deeper desire — you may settle for comfort, not vitality.</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>This level is a launchpad, not a resting place. Stability gives you the platform to build. From here, you can consciously direct energy into purpose, joy, and deeper flow — but you must choose to act.</p>
+      `,
+
+      5: `
+        <div class="level-highlight"><strong>⚪ Level 5: Willingness / Hope / Mild Positivity</strong></div>
+        <p><strong>💬 Typical Emotional State:</strong></p>
+        <p>You’re open. Curious. Ready to engage. Not quite inspired, but no longer stuck — this is the beginning of upward momentum.</p>
+
+        <p><strong>🌟 Associated Emotions:</strong></p>
+        <ul>
+            <li>Hopeful</li>
+            <li>Optimistic</li>
+            <li>Interested</li>
+            <li>Willing</li>
+            <li>Curious</li>
+            <li>Open-minded</li>
+            <li>Encouraged</li>
+            <li>Eager (mildly)</li>
+            <li>Motivated (starting to emerge)</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Hidden Traps:</strong></p>
+        <ul>
+            <li>Overestimating readiness — taking on too much too fast can overwhelm this delicate stage.</li>
+            <li>Lack of clear direction — momentum without aim leads to scattered effort.</li>
+            <li>Relying too much on external validation — still not fully rooted in intrinsic drive.</li>
+            <li>Avoiding deeper internal work — trying to "stay positive" without resolving lingering issues.</li>
+        </ul>
+        <p><strong>🧠 Example:</strong> You start a project with enthusiasm but abandon it after two days. Energy is rising — but lacks structure or grounding.</p>
+
+        <p><strong>✅ Strategies to Move Up into True Positivity & Flow:</strong></p>
+        <ul>
+            <li><strong>Set small, clear intentions:</strong> Not massive goals — just a next step with meaning (e.g. “Reach out to one person I admire”).</li>
+            <li><strong>Track micro-wins:</strong> Each small success builds confidence and reinforces upward movement. Try journaling “3 wins a day.”</li>
+            <li><strong>Practice emotional momentum:</strong> Notice and extend moments when you feel uplifted (amplify instead of dismissing them).</li>
+            <li><strong>Connect with purpose, not pressure:</strong> Ask: “Why does this matter to me personally?” Focus on contribution and meaning.</li>
+            <li><strong>Use movement to shift energy:</strong> Dance, walk with intention, tidy your space with music — use your body to support forward emotion.</li>
+            <li><strong>Surround yourself with inspiration:</strong> Podcasts, people, quotes — everything around you should reinforce upward direction.</li>
+        </ul>
+
+        <p><strong>⚡ Power-Up Move:</strong></p>
+        <p>Do a “Courage Ritual” —</p>
+        <ul>
+            <li>Commit to one thing today that’s slightly uncomfortable but aligned with growth (send a pitch, ask a question, apply to something). This builds emotional muscle and trust in yourself.</li>
+        </ul>
+
+        <p><strong>🚨 What to Watch Out For:</strong></p>
+        <ul>
+            <li>“Toxic optimism” — skipping over real fears or doubts in favor of forced positivity.</li>
+            <li>Shiny-object syndrome — jumping from one idea to another without finishing.</li>
+            <li>Premature self-comparison — seeing others further ahead and spiraling downward again.</li>
+            <li>Fear of momentum — low-key sabotage due to fear of success.</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>Willingness is the bridge between neutrality and creativity. It’s where real personal transformation begins — not in massive breakthroughs, but in small consistent actions. This is where the Flow state starts to become possible — as your energy and trust return.</p>
+      `,
+
+      6: `
+        <div class="level-highlight"><strong>🟡 Level 6: Contentment / Calm Joy / Satisfaction</strong></div>
+        <p><strong>🌿 Typical Emotional State:</strong></p>
+        <p>You feel good — not ecstatic, but grounded and genuinely okay. There’s a sense of peace, lightness, and presence. You’re not rushing, not grasping — and that's powerful.</p>
+
+        <p><strong>🌟 Associated Emotions (from Wheel references):</strong></p>
+        <ul>
+            <li>Calm</li>
+            <li>Relaxed</li>
+            <li>Satisfied</li>
+            <li>Grateful</li>
+            <li>Light-hearted</li>
+            <li>Present</li>
+            <li>Balanced</li>
+            <li>Comfortable</li>
+            <li>Steady</li>
+            <li>Appreciative</li>
+        </ul>
+
+        <p><strong>✅ Strategies to Move Up into Enthusiasm, Passion & Flow:</strong></p>
+        <ul>
+            <li><strong>Tune into gratitude:</strong> Identify 3 small things that bring you peace right now (e.g., sunlight, coffee aroma, a finished task).</li>
+            <li><strong>Create from stillness:</strong> This is a great place to write, plan, or make art — without pressure.</li>
+            <li><strong>Simplify:</strong> Let go of tasks or ideas that clutter your mind. Focus on what matters most today.</li>
+            <li><strong>Go deeper with presence:</strong> Practice mindfulness. Slow meals, mindful walks, gentle meditation. These amplify contentment.</li>
+            <li><strong>Share light energy:</strong> A simple compliment, a smile, or helping hand deepens your own experience of well-being.</li>
+            <li><strong>Do small acts of alignment:</strong> Tidy a corner, stretch your back, drink water. Harmony in small actions reinforces this stable energy.</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Hidden Traps:</strong></p>
+        <ul>
+            <li><strong>Complacency:</strong> Staying in contentment too long can cause stagnation or missed growth opportunities.</li>
+            <li><strong>Fear of shaking peace:</strong> Avoiding challenges because they may disturb your balance (which can block progress).</li>
+            <li>Underestimating your potential: Settling for “okay” when you’re ready for “amazing.”</li>
+        </ul>
+        <p><strong>🧠 Example:</strong> You feel good and don't want to ruin it — so you put off sending that important application. But staying here too long can mean missing the window of momentum.</p>
+
+        <p><strong>🔥 Power-Up Move:</strong></p>
+        <ul>
+            <li>Ask: “What would my calmest, wisest self gently stretch into right now?” Then do that. Keep it light, but directed.</li>
+        </ul>
+
+        <p><strong>🚨 What to Watch Out For:</strong></p>
+        <ul>
+            <li>Pleasure over purpose.</li>
+            <li>Staying in comfort zones at the expense of growth.</li>
+            <li>Drift mode.</li>
+            <li>Floating through days without checking alignment.</li>
+            <li>Fading emotional edge.</li>
+            <li>Losing passion if contentment turns into disengagement.</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>Contentment is a powerful launchpad. From here, you can build sustainable momentum toward creative energy, passion, and purpose — without burning out. Enjoy it — but don’t settle if your soul is calling for more.</p>
+      `,
+
+      7: `
+        <div class="level-highlight"><strong>🟢 Level 7: Optimism / Curiosity / Interest</strong></div>
+        <p><strong>🌟 Typical Emotional State:</strong></p>
+        <p>This level is your turning point. You begin to look toward the future with hope. Your mind starts generating ideas, asking questions, wanting to move toward something.</p>
+
+        <p><strong>💬 Associated Emotions (from Wheel & Ladder references):</strong></p>
+        <ul>
+            <li>Curious</li>
+            <li>Interested</li>
+            <li>Hopeful</li>
+            <li>Optimistic</li>
+            <li>Open-minded</li>
+            <li>Playful</li>
+            <li>Engaged</li>
+            <li>Alert</li>
+            <li>Energetic</li>
+            <li>Lightly Motivated</li>
+        </ul>
+
+        <p><strong>✅ Strategies to Move Up into Enthusiasm & Inspired Action:</strong></p>
+        <ul>
+            <li><strong>Follow the spark:</strong> Ask: “What feels interesting right now?” Then give it 15–30 minutes of focused attention.</li>
+            <li><strong>Set a micro-goal:</strong> Not a big outcome. Just the next meaningful step — clarity fuels momentum.</li>
+            <li><strong>Brainstorm freely:</strong> Capture ideas without judging. Let imagination run before refining.</li>
+            <li><strong>Change environments:</strong> Move to a café, library, park, or new workspace. New surroundings = fresh curiosity.</li>
+            <li><strong>Ask better questions:</strong> Shift from “Why can’t I?” to “What’s possible from here?”</li>
+            <li><strong>Connect with other curious minds:</strong> Share an idea with someone who energizes you — community multiplies interest.</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Hidden Traps:</strong></p>
+        <ul>
+            <li><strong>Scattered attention:</strong> Curiosity can fragment into distractions. Stay focused on aligned exploration.</li>
+            <li><strong>Chronic ideation:</strong> Constant thinking without action = idea fatigue. <strong>Strategy:</strong> Balance 1 idea with 1 concrete step.</li>
+            <li>Overplanning: Trying to mentally map everything before beginning can kill the spark.</li>
+            <li>False starts: Jumping from one thing to the next without finishing anything leads to overwhelm.</li>
+        </ul>
+
+        <p><strong>🔥 Power-Up Move:</strong></p>
+        <p>Start a “Momentum Journal.” Each day, note:</p>
+        <ul>
+            <li>What sparked curiosity?</li>
+            <li>What 1 thing did you try or explore?</li>
+            <li>What’s worth continuing?</li>
+        </ul>
+
+        <p><strong>🚨 What to Watch For:</strong></p>
+        <ul>
+            <li>Seeking novelty for escape.</li>
+            <li>Curiosity used to avoid discomfort, not to grow.</li>
+            <li>Fear of failing early.</li>
+            <li>At this stage, experimentation > perfection — don’t hold back.</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>This level is about opening doors. You don’t need to know everything — you just need to trust that exploring will reveal the path. Curiosity is a bridge to higher energy and flow. Use it well — and you’ll soon be in states of joy, creativity, and even personal breakthroughs.</p>
+      `,
+
+      8: `
+        <div class="level-highlight"><strong>🟡 Level 8: Enthusiasm / Motivation / Purpose</strong></div>
+        <p><strong>🌟 Typical Emotional State:</strong></p>
+        <p>Now you’re fully engaged. You’ve moved from thinking to doing — and you feel aligned with your actions. There’s a sense of inner drive, direction, and upliftment.</p>
+
+        <p><strong>💬 Associated Emotions:</strong></p>
+        <ul>
+            <li>Enthusiastic</li>
+            <li>Motivated</li>
+            <li>Purposeful</li>
+            <li>Eager</li>
+            <li>Excited</li>
+            <li>Empowered</li>
+            <li>Inspired</li>
+            <li>Focused</li>
+            <li>Confident</li>
+            <li>Joyfully Determined</li>
+        </ul>
+
+        <p><strong>✅ Strategies to Move Up Toward Passion / Joy:</strong></p>
+        <ul>
+            <li><strong>Channel energy into aligned action:</strong> Use this energy to build momentum on what truly matters. Prioritize meaningful projects.</li>
+            <li><strong>Reconnect with purpose:</strong> Ask: Why is this important to me? Who am I doing this for?</li>
+            <li><strong>Create momentum rituals:</strong> Start the day with a short win or micro habit to reinforce motivation.</li>
+            <li><strong>Celebrate progress:</strong> Acknowledge small achievements — it locks in positive reinforcement and keeps energy flowing.</li>
+            <li><strong>Work in deep-focus blocks:</strong> 90 minutes of uninterrupted, immersive work helps you drop into flow faster.</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Hidden Traps:</strong></p>
+        <ul>
+            <li><strong>Overexcitement → burnout:</strong> Riding high can tempt you to overcommit. Remember: energy is renewable, not infinite.</li>
+            <li><strong>Losing touch with rest:</strong> Enthusiasm can mask exhaustion. Schedule recovery just like action.</li>
+            <li><strong>Tunnel vision:</strong> Too much focus can block helpful feedback or new opportunities. Stay open while staying driven.</li>
+            <li><strong>Chasing passion for its own sake:</strong> If you pursue “hype” rather than alignment, you risk crashing when things get hard.</li>
+        </ul>
+
+        <p><strong>🔥 Power-Up Move:</strong></p>
+        <p>The “Why 5x” Drill</p>
+        <ul>
+            <li>Take a task and ask “Why is this important to me?” Then repeat your answer 5 times, each time going deeper. You’ll uncover intrinsic motivation — the fuel that lasts.</li>
+        </ul>
+
+        <p><strong>🚨 What to Watch For:</strong></p>
+        <ul>
+            <li>Acting impulsively just because energy is high</li>
+            <li>Making big decisions (e.g., quitting job, starting business, ending relationship) without grounding</li>
+            <li>Ignoring emotional signs of fatigue because “I’m on a roll”</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>This level is where meaning meets energy. It’s not just about doing more — it’s about doing what moves you and feeling that fire as fuel. If you learn to harness it wisely, enthusiasm becomes a gateway to Flow and Peak States.</p>
+      `,
+
+      9: `
+        <div class="level-highlight"><strong>💚 Level 9: Passion / Flow / Excitement</strong></div>
+        <p><strong>🌟 Typical Emotional State:</strong></p>
+        <p>This is where you're in the zone. Time dilates. Energy feels limitless. You’re deeply aligned — emotionally, mentally, even physically — and it shows in your performance, joy, and clarity.</p>
+
+        <p><strong>💬 Associated Emotions:</strong></p>
+        <ul>
+            <li>Passionate</li>
+            <li>Flowing</li>
+            <li>Electrified</li>
+            <li>Empowered</li>
+            <li>Absorbed</li>
+            <li>Alive</li>
+            <li>Vibrant</li>
+            <li>Ecstatic</li>
+            <li>Creative</li>
+            <li>Limitless</li>
+        </ul>
+
+        <p><strong>✅ Strategies to Sustain or Deepen the State:</strong></p>
+        <ul>
+            <li><strong>Minimize distractions:</strong> Protect your flow space. Turn off notifications. Set boundaries.</li>
+            <li><strong>Ride the wave, but don’t over-surf:</strong> Work in cycles. Use Pomodoro-style sprints and scheduled breaks to avoid burnout.</li>
+            <li><strong>Balance emotion with structure:</strong> Flow thrives on freedom within form. Define goals, then surrender to the process.</li>
+            <li><strong>Reflect and integrate:</strong> After a peak session, pause. What worked? What triggered flow? Capture it.</li>
+            <li><strong>Keep the nervous system stable:</strong> High excitement can crash into fatigue. Nourish your body: hydrate, breathe, stretch.</li>
+        </ul>
+
+        <p><strong>⚠️ Common Pitfalls / Hidden Traps:</strong></p>
+        <ul>
+            <li><strong>Flow addiction:</strong> Chasing only peak states can lead to avoidance of necessary low-energy tasks.</li>
+            <li><strong>Overconfidence:</strong> Excitement can cause poor decisions — risky investments, impulsive promises, or skipping due diligence.</li>
+            <li><strong>Ignoring your needs:</strong> Flow can make you forget hunger, fatigue, or emotional undercurrents. Check in with your body.</li>
+            <li><strong>Romanticizing chaos:</strong> Passion without grounding can feel powerful, but becomes unstable over time.</li>
+        </ul>
+
+        <p><strong>🧨 Risk Snapshot:</strong></p>
+        <ul>
+            <li>You might trust too easily → scams / manipulation</li>
+            <li>You might scale too fast without foundation</li>
+            <li>You might neglect relationships or self-care chasing creative highs</li>
+        </ul>
+
+        <p><strong>🛠️ Grounding Practices:</strong></p>
+        <ul>
+            <li>Do a 5-minute body scan</li>
+            <li>Journal after each high-flow moment to reflect, not just rush forward</li>
+            <li>Walk in nature to discharge excessive energy</li>
+            <li>Anchor your excitement in values and long-term vision</li>
+        </ul>
+
+        <p><strong>🧭 Reframe for Growth:</strong></p>
+        <p>Flow is not a goal — it’s a side effect of clarity, alignment, and surrender. Use it as a signal that you're on the right path, not as a drug to escape low states. You’re not chasing the feeling — you’re becoming the person who lives in that frequency more often.</p>
+      `
     };
 
     // Управление громкостью
@@ -1533,22 +1321,19 @@ You’re not chasing the feeling — you’re becoming the person who lives in t
         img.src = src;
       });
       
-      // Предварительная компиляция регулярных выражений для форматирования
-      window.formatRegexes = {
-        numbers: /(\d+\.\s)/g,
-        headers: /(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g,
-        levels: /^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm
-      };
+      // Предварительная компиляция регулярных выражений для форматирования - Removed as we're using direct HTML now
+      // window.formatRegexes = {
+      //   numbers: /(\d+\.\s)/g,
+      //   headers: /(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g,
+      //   levels: /^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm
+      // };
     });
 
     // Обновленная функция форматирования текста
     function formatActionText(text) {
-      if (!text) return '';
-      
-      return text
-        .replace(/(\d+\.\s)/g, '<strong>$1</strong>')
-        .replace(/(Goal:|Action Plan:|⚠️[^:]*:|✅[^:]*:|🔥[^:]*:|🧭[^:]*:)/g, '<strong>$1</strong>')
-        .replace(/^(🔴|🟠|🟡|🟢|💚|⚪|🟤)(.+)$/gm, '<div class="level-highlight"><strong>$1$2</strong></div>');
+      // Since the actionPlans now contain full HTML, we just return the text directly.
+      // Any specific formatting will be handled by the CSS for .action-text ul, li, strong, etc.
+      return text;
     }
 
     console.log('Flow Game loaded successfully');
